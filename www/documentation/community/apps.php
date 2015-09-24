@@ -31,15 +31,15 @@
 
     <!-- Facebook -->
     <meta property="og:side_name" content="Crosswalk" />
-    <meta property="og:title" content="Crosswalk" />
-    <meta property="og:url" content="http://crosswalk-project.org/documentation/community/conferences/phonegapday2015" />
+    <meta property="og:title" content="Applications" />
+    <meta property="og:url" content="http://crosswalk-project.org/documentation/community/apps" />
     <meta property="og:description" content="Enable the most advanced web innovations with the Crosswalk Project web runtime to develop powerful Android and Cordova apps." />
     <meta property="og:image" content="/assets/crosswalk-og-banner.jpg" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:url" content="http://crosswalk-project.org/documentation/community/conferences/phonegapday2015" />
-    <meta name="twitter:title" content="Crosswalk" />
+    <meta name="twitter:url" content="http://crosswalk-project.org/documentation/community/apps" />
+    <meta name="twitter:title" content="Applications" />
     <meta name="twitter:description" content="Enable the most advanced web innovations with the Crosswalk Project web runtime to develop powerful Android and Cordova apps." />
     <meta name="twitter:site" content="@xwalk_project" />
 
@@ -231,7 +231,7 @@
                
            </li>
            
-           <li class="article-item ">
+           <li class="article-item  nav-item--active">
              <a class="article-link" href="/documentation/community/apps.html">Applications</a>
                
            </li>
@@ -265,27 +265,138 @@
 
 
 <article class="article article--hasToC">
-  <h1>PhoneGap Day EU 2015</h1>
-<p>The Crosswalk Project will be at <a href="http://pgday.phonegap.com/">PhoneGap Day in Amsterdam</a></p>
-<p>The team is excited to be involved in PhoneGap Day -- May 18-19, 2015 in Amsterdam.</p>
-<p><a href="http://pgday.phonegap.com">
-    <img src="/assets/pgd-banner.jpg" 
-        style="width:620px; border:solid 1px black;
-        display:block; margin-left:auto; margin-right:auto;">
-</a></p>
-<p>The Crosswalk plugin will be part of the PhoneGap 5.0 and build service!  This will give developers the ability to easily use Crosswalk as their runtime for Android applications while building with the PhoneGap tools they know and love. In addition, with the introduction in <a href="http://cordova.apache.org/announcements/2015/04/15/cordova-android-4.0.0.html">Cordova Android 4.0.0</a> of pluggable WebView support, it is now easy to use the Crosswalk WebView with your Cordova app.  See <a href="/documentation/cordova/crosswalk_with_cordova4.html">Using Crosswalk WebView in Cordova Android 4.0</a>.</p>
+  
 
-<p>At PhoneGap day, come discover how to get the most out of your web applications by attending one of the Crosswalk-sponsored talks: <br /><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>Unleash the full fury of web innovation in your Android app today</strong><br />
-&nbsp;&nbsp;&nbsp;&nbsp;Presented by Francesco Balestrieri, Crosswalk Project Manager, Intel</p>
+  <h2>Crosswalk Project-Empowered Apps</h2>
+  <div class="introBlock">This page showcases applications that have been built using the Crosswalk Project.  All applications listed have been published in an application store.</div>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>cordova-plugin-crosswalk-webview</strong><br />
-&nbsp;&nbsp;&nbsp;&nbsp;Presented by Sakari Poussa, Sr. Architect, Intel</p></p>
-<p>In addition, our senior engineers will be staffing our booth so please come by and find out why Crosswalk is speedily becoming one of the most popular ways to empower ambitious web applications.</p>
+<div class="mainBlock2">
+  <div class="iconGrid" id="iconGrid" >
+
+    <div class='cube' id='cube0'>
+      <div class='appLabel'>Tiny Flashlight LED</div>
+      <br>
+      <a href='https://play.google.com/store/apps/details?id=com.devuni.flashlight&hl=en'>
+	<img class='appImg' id='appImg0'src='/assets/apps/tiny-flashlight-led84.jpg'/> <br>
+      </a>
+      <div class='appDetailLabel'0'>
+	<a href='https://www.intel.com'>Nikolay Ananiev<br>
+	</a>Published: Jan 2015<br>Downloads: 50M+<br>
+      </div>
+    </div>
+
+    <div class='cube' id='cube1'>
+      <div class='appLabel'>Pinterest</div>
+      <br>
+      <a href='https://play.google.com/store/apps/details?id=com.pinterest&hl=en'>
+	<img class='appImg' id='appImg1'src='/assets/apps/pinterest84.jpg'/> <br>
+      </a>
+      <div class='appDetailLabel'1'>
+	<a href='http://www.pinterest.com'>Pinterest Inc.<br>
+	</a>Published: Feb 2013<br>Downloads: 50,000<br>
+      </div>
+    </div>
+
+    <div class='cube' id='cube2'>
+      <div class='appLabel'>Amazon Mobile</div>
+      <br>
+      <a href='https://play.google.com/store/apps/details?id=com.amazon.mShop.android.shopping&hl=en'>
+	<img class='appImg' id='appImg2'src='/assets/apps/amazon-mobile84.jpg'/> <br>
+      </a>
+      <div class='appDetailLabel'2'>
+	<a href='http://www.amazon.com'>Amazon Inc.<br>
+	</a>Published: Mar 2011<br>Downloads: 100M+<br>
+      </div>
+    </div>
+
+  </div>
+  <br clear="all" />
+</div>
 
 
+<?php
+
+$con = mysqli_connect('localhost', 'xwalkweb', 'webapps');
+if (mysqli_connect_errno()) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+echo "Connect great boys" . "<br>";
+
+if (!mysqli_select_db($con, "xwalk")) {
+    die("Failed to select db: " . $con->select_error);
+}
+
+$result = mysqli_query($con, "SELECT * FROM `xwalk_apps`");
+
+if (mysqli_num_rows($result) == 0) {
+    //exit quietly
+    echo "No rows found in table!.". "<br>";
+    exit;
+}
+while( $row = mysqli_fetch_array($result) ) {
+    $appid = $row['appid'];
+    $name = $row['name'];
+    $publish_date = $row['publish_date'];
+
+    echo "Found!  ID: " . $appid . ", name: " . $name . 
+         ", Publish Date: " . $publish_date . "<br>";
+}
+
+/*********************/
+
+/*
++----------------+---------------+------+-----+---------+-------+
+| Field          | Type          | Null | Key | Default | Extra |
++----------------+---------------+------+-----+---------+-------+
+| appid          | char(10)      | NO   | PRI | NULL    |       |
+| name           | varchar(255)  | NO   |     | NULL    |       |
+| author         | varchar(100)  | NO   |     | NULL    |       |
+| publish_date   | date          | YES  |     | NULL    |       |
+| num_downloads  | int(11)       | YES  |     | NULL    |       |
+| image          | varchar(255)  | YES  |     | NULL    |       |
+| price          | decimal(6,2)  | YES  |     | NULL    |       |
+| size           | int(11)       | YES  |     | NULL    |       |
+| architecture   | bit(6)        | YES  |     | NULL    |       |
+| xdk            | bit(1)        | YES  |     | NULL    |       |
+| category       | varchar(100)  | YES  |     | NULL    |       |
+| version        | varchar(100)  | YES  |     | NULL    |       |
+| description    | varchar(500)  | YES  |     | NULL    |       |
+| author_url     | varchar(2000) | YES  |     | NULL    |       |
+| goole_play_url | varchar(2000) | YES  |     | NULL    |       |
++----------------+---------------+------+-----+---------+-------+
+*/
+
+?>
+
+ <a href="/documentation/community/app-submit.html">App Submission Page</a>
   <footer class="article-next">
     
+
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
 
 
   </footer>
