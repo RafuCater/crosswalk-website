@@ -138,3 +138,221 @@ textarea:focus, input:focus {
     border: solid #0198da 2px;
     background-color: #0198da;
 }
+
+// Style for App Submit Form ---------------------------------
+
+div.appDisplayPvw {
+  //border: 1px solid red;
+  position: absolute;
+  top:  125px;
+  left: 490px;
+  width: 170px; 
+}
+
+.appDisplayPvw .appCube { 
+  border: solid #00a2ff 1px;
+  background-color: #f1fafd;
+  min-width: 156px;
+  margin: 5px;
+  padding: 0px;
+  float: left;
+  text-align: center;
+  color: #3b3b3b;
+  font-family: sans-serif;
+}
+
+.appDisplayPvw .appLabel {
+  text-align: left;
+  font-family: sans-serif;
+  color: #3b3b3b;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 10px 10px 10px;
+  height: 36px;
+  margin-bottom: 20px;
+}
+
+.appDisplayPvw .appImg {
+    border: solid black 2px;
+    background-color: white;
+    width: 100px;
+    height: 100px; 
+    border-radius: 8px; 
+    padding: 3px;
+    cursor: pointer;
+}
+
+.appDisplayPvw .appImg:hover {
+    border: solid #0198da 2px;
+    background-color: #0198da;
+}
+
+.appDisplayPvw .appAuthor {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.appDisplayPvw .appDetailLabel {
+    text-align: left;
+    font-size: 13px;
+    font-weight: normal;
+    padding: 10px 0px 10px 10px;
+}
+
+.appDisplayPvw .appPreviewLabel {
+  text-align: center;
+  color: #000; //#ee453a;
+  font-size: 14px;
+  font-weight:bold;
+}
+
+// Styles for Form
+
+form.appSubmitForm {
+  border: 1px solid #b2b2b2;
+  -webkit-border-radius: 15px;
+  border-radius: 15px;
+
+  position: relative;
+  margin: 20px auto;
+
+  background-color: #f5f5f5;
+  font-family: Verdana, Arial,Helvetica, sans-serif;
+}
+
+form.appSubmitForm fieldset.appSubmitMain {
+  border: 0;
+  border-top: 1px solid #000;
+  margin: 15px 15px 0px 15px;
+  padding-bottom: 5px;
+}
+
+form.appSubmitForm fieldset.appSubmitAgreement {
+  border: 0;
+  border-top: 1px solid #000;
+  margin: 15px 15px 0px 15px;
+  padding: 10px 25px 0px 25px;
+}
+
+form.appSubmitForm legend {
+  color: #000; //#ee453a;  // Crosswalk red
+  padding: 2px;
+  font-weight:bold;
+  font-size: 14px;
+}
+
+form.appSubmitForm p {
+  padding: 7px 0px;
+  clear:both;
+  font-size: 10pt;
+}
+
+form.appSubmitForm label {
+  width: 160px;
+  height: 27px;
+  margin: 0px 5px 0px 0px;
+  padding: 5px 3px 3px 3px;
+
+  float: left;
+  text-align: right;
+  font-weight: normal;
+}
+
+form.appSubmitForm label.rqdLabel {
+  margin: 0px;
+  padding: 0px;
+  text-align: left;                             
+  font-style:italic;
+}
+
+form.appSubmitForm label.left,
+form.appSubmitForm label.arch { 
+  text-align: left;
+}
+
+form.appSubmitForm label.arch {
+  width: 60px;  
+}
+
+form.appSubmitForm input,textarea {
+  width: 250px;
+  height: 27px;
+  margin: 0px;
+  padding: 0px 3px 0px 3px;
+
+  border: 1px solid #E1E1E1;
+  appearance: none;
+  box-shadow: none;
+  border-radius: none;
+  transition: box-shadow 0.2s, border 0.2s;
+
+  color: #505050;
+  float: left;
+}
+
+form.appSubmitForm input.url { 
+  width: 430px;
+}
+
+form.appSubmitForm input[type=file] {
+  border: 0px;
+}
+
+div.ui-datepicker {
+ font-size: 12px;
+}
+
+form.appSubmitForm input.size {
+  width: 45px;
+  text-align: right;
+}
+
+form.appSubmitForm input[type=checkbox] {
+  width:14px;
+  margin-top: 2px;
+}
+
+form.appSubmitForm select {
+  margin: 0px;
+  height: 27px;
+  float:left;
+}
+
+form.appSubmitForm textarea {
+  padding-top: 5px;
+  height: 46px;
+}
+
+form.appSubmitForm input:focus, select:focus, textarea:focus {
+  background-color: #f1fafd; //light blue
+  border: solid 1px #707070;
+  box-shadow: 0 0 3px 1px #969696;
+}
+
+form.appSubmitForm input:invalid, input:focus:invalid {
+  //-moz-box-shadow: none;
+  //border: 1px solid red;
+}
+
+p.appAccept label {
+  width:75%;
+  text-align:left;
+}
+
+.appSubmitBtn {
+  border: 0;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+
+  margin-top: -5px;
+  padding: 8px 10px 8px;
+  float:left;
+
+  //background: #9999FF;
+  cursor: pointer;
+  font-size:18px;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+}

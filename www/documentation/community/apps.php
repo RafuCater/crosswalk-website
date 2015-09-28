@@ -279,7 +279,7 @@
       <a href='https://play.google.com/store/apps/details?id=com.devuni.flashlight&hl=en'>
 	<img class='appImg' id='appImg0'src='/assets/apps/tiny-flashlight-led84.jpg'/> <br>
       </a>
-      <div class='appDetailLabel'0'>
+      <div class='appDetailLabel'>
 	<a href='https://www.intel.com'>Nikolay Ananiev<br>
 	</a>Published: Jan 2015<br>Downloads: 50M+<br>
       </div>
@@ -291,7 +291,7 @@
       <a href='https://play.google.com/store/apps/details?id=com.pinterest&hl=en'>
 	<img class='appImg' id='appImg1'src='/assets/apps/pinterest84.jpg'/> <br>
       </a>
-      <div class='appDetailLabel'1'>
+      <div class='appDetailLabel'>
 	<a href='http://www.pinterest.com'>Pinterest Inc.<br>
 	</a>Published: Feb 2013<br>Downloads: 50,000<br>
       </div>
@@ -303,7 +303,7 @@
       <a href='https://play.google.com/store/apps/details?id=com.amazon.mShop.android.shopping&hl=en'>
 	<img class='appImg' id='appImg2'src='/assets/apps/amazon-mobile84.jpg'/> <br>
       </a>
-      <div class='appDetailLabel'2'>
+      <div class='appDetailLabel'>
 	<a href='http://www.amazon.com'>Amazon Inc.<br>
 	</a>Published: Mar 2011<br>Downloads: 100M+<br>
       </div>
@@ -369,6 +369,7 @@ while( $row = mysqli_fetch_array($result) ) {
 ?>
 
  <a href="/documentation/community/app-submit.html">App Submission Page</a>
+
   <footer class="article-next">
     
 

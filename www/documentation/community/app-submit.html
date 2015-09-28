@@ -265,25 +265,152 @@
 
 
 <article class="article article--hasToC">
-    <h2>Crosswalk Project-Empowered Apps</h2>
-  <div class="introBlock">This page showcases applications that have been built using the Crosswalk Project.  All applications listed have been published in an application store.</div><br>
+  
+    <script src="/js/applist.js"></script>
 
-  <h2>Add Crosswalk App</h2>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+        
 
-  <form action='app-insert.php' method='post' id='app-submit-form' >
-    <p>
-      <input type='text' name='name' placeholder='app name' id='name' />
-    </p>
-    <p>
-      <input type='text' name='author' placeholder='author' id='author' />
-    </p>
-    <button id='insert'>Insert</button>
-    <p id='result'></p>
-    <script src='app-insert.js'></script>
-  </form>
+<div class="appSubmitDiv">
+    <h2>Submit Crosswalk Application</h2>
+    Fill in at least the required fields below to submit your application to be displayed on the <a href="/documentation/community/apps.php">Application Page</a>. Thank you for taking advantage of the Crosswalk Project!
 
+    <form class="appSubmitForm" action="app-submit.php" method="post">
 
-<p> <a href="/documentation/community/apps.php">Application Page</a></p>
+      <!-- preview item -->
+      <div class='appDisplayPvw'>
+	    <div class='appCube' id='pvwCube'>
+	      <div class='appLabel' id='pvwLabel'>Application Name</div>
+	        <img class='appImg' id='pvwImg' 
+                 src='/assets/apps/missing-image.jpg' 
+                 title="On click URL: <Google Play URL>"/>
+	        <div class='appDetailLabel'>
+	        <div class='appAuthor' id='pvwAuthor' 
+                 title="On click URL: <Author URL>">Author</div>
+	        <div id='pvwPublishDate'>Published: &lt;TBD&gt;</div>
+	        <div id='pvwDownloads'>Downloads: &lt;TBD&gt;</div>
+	      </div>
+	    </div>
+        <div class='appPreviewLabel'>Display Preview</div>
+      </div>
+
+      <fieldset class="appSubmitMain">
+        <legend>App Details</legend>
+        <p style="padding-top:0px">
+          <label>Google Play URL: </label>
+          <input name="googleUrl" class="url" type="url" autofocus placeholder="http://" oninput="onGooglePlayUrlChange(this)"/>
+        </p>
+        <p>
+          <label>App name*: </label>
+          <input name="name" type="text" maxlength="50" oninput="onAppNameChange(this)" required />
+        </p>
+        <p>
+          <label>Image*: </label>
+	      <input name="imageFile" type="file" onchange="onImgSelect(this)" required />
+        </p>
+        <p>
+          <label>Author / Company*: </label>
+          <input name="author" type="text" maxlength="30" oninput="onAuthorChange(this)" required/>
+        </p>
+        <p>
+          <label >Author / Company URL: </label>
+          <input name="authorUrl" type="url" placeholder="http://" pattern="https?://.+" oninput="onAuthorUrlChange(this)"/>
+        </p>
+	    <p>
+	      <label>Email*: </label>
+	      <input name="email" type="email" name="email" placeholder="Enter a valid email address" required>
+	    </p>
+        <p>
+          <label>Publish date: </label>
+	      <input name="publishDate" type="date" id="datepicker" onchange="onPublishDateChange(this)"/>
+        </p>
+        <p>
+          <label>Number of downloads: </label>
+	      <input name="downloads" class="downloads" type="text" pattern="[0-9]+" maxlength="10" oninput="onDownloadsChange(this)"/>
+        <p>
+          <label>App price ($): </label>
+          <input name="price" type="text" maxlength="8" oninput="onPriceChange(this)"
+                 pattern="^\\$?(([1-9](\\d*|\\d{0,2}(,\\d{3})*))|0)(\\.\\d{1,2})?$"/>
+        </p>
+        <p>
+          <label>Size: </label>
+	      <input name="size" class="size" type="text" pattern="\d+" maxlength="5" value="0"><label class="left">MB</label>
+        </p>
+        <p>
+	      <label>Architectures supported: </label>
+	      <input name="archArm" type="checkbox" value="0x1"/><label class="arch">ARM</label>
+	      <input name="archx86" type="checkbox" value="0x2"/><label class="arch">x86</label>
+ 	      <input name="archx86_64" type="checkbox" value="0x4"/><label class="arch">x86_64</label>
+	    </p>
+	    <p>
+   	      <label>Intel XDK: </label>
+          <input name="xdk" type="checkbox" value="0x1"/><label class="left">Built with the Intel XDK</label>
+        </p>
+        <p>
+	      <label>Category: </label>
+          <select name="category">
+	        <option></option>
+            <option value="1">Arcade Action</option>
+	        <option value="2">Books Reference</option>
+	        <option value="3">Brain Puzzle</option>
+	        <option value="4">Business</option>
+	        <option value="5">Cards/Casino</option>
+	        <option value="6">Casual</option>
+	        <option value="7">Communication</option>
+	        <option value="8">Education</option>
+	        <option value="9">Entertainment</option>
+	        <option value="10">Finance</option>
+	        <option value="11">Health Fitness</option>
+	        <option value="12">Libraries Demo</option>
+	        <option value="13">Lifestyle</option>
+	        <option value="14">Media Video</option>
+	        <option value="15">Medical</option>
+	        <option value="16">Music Audio</option>
+	        <option value="17">News Magazines</option>
+	        <option value="18">Personalization</option>
+	        <option value="19">Photography</option>
+	        <option value="20">Productivity</option>
+	        <option value="21">Racing</option>
+	        <option value="22">Social</option>
+	        <option value="23">Shopping</option>
+	        <option value="24">Sports</option>
+	        <option value="25">Tools</option>
+	        <option value="26">Transportation</option>
+	        <option value="27">Travel Local</option>
+	        <option value="28">Weather</option>
+          </select>
+	    </p>
+        <p>
+          <label>Version: </label>
+          <input name="version" type="text"/>
+        </p>
+	    <p>
+          <label>Notes: </label>
+          <textarea name="notes" id="desc" name="notes" placeholder="Optional information for submission"></textarea>
+	    </p>
+
+	    <p><label class="rqdLabel">* required fields</label></p>
+      </fieldset>
+
+      <fieldset class="appSubmitAgreement">
+        <legend>Agreement</legend>
+        <p class="appAccept">
+          <input type="checkbox" required value=""/>
+          <label>*  I accept the <a href="#">Terms and Conditions</a>.</label>
+	      <button class="appSubmitBtn">Submit App &raquo;</button>
+        </p>
+      </fieldset>
+      <p id="appSubmitResult">Yo, fill me in dudes!</p>
+      <script src='/js/applist.js'></script>
+    </form>
+</div> <!-- appSubmitDiv -->
+
+<div class="appResultDiv">
+  Dude, you are the bomb.com
+</div> <!-- appResultDiv -->
+
 
   <footer class="article-next">
     
