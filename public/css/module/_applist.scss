@@ -141,6 +141,10 @@ textarea:focus, input:focus {
 
 // Style for App Submit Form ---------------------------------
 
+div.appSubmitDiv {
+  display: block;
+}
+
 div.appDisplayPvw {
   //border: 1px solid red;
   position: absolute;
@@ -232,7 +236,7 @@ form.appSubmitForm fieldset.appSubmitAgreement {
   border: 0;
   border-top: 1px solid #000;
   margin: 15px 15px 0px 15px;
-  padding: 10px 25px 0px 25px;
+  padding: 10px 25px 20px 25px;
 }
 
 form.appSubmitForm legend {
@@ -355,4 +359,29 @@ p.appAccept label {
   cursor: pointer;
   font-size:18px;
   text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+}
+
+// --------- Style for app submit results
+
+div.appResultDiv {
+  display: none;
+}
+div.appSubmitResultDiv {
+  border: 1px solid #b2b2b2;
+  -webkit-border-radius: 15px;
+  border-radius: 15px;
+
+  margin: 20px auto;
+  padding: 20px;
+
+  background-color: #f5f5f5;
+}
+
+.appSubmitResultImg {
+  border: 1px solid green;
+}
+
+.appSubmitResult {
+  border: 1px solid red;
+  display: inline-block;
 }

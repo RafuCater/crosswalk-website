@@ -1,13 +1,32 @@
 
 <?php
 
+function createReturnDiv ($error) {
+    $ret = 
+      "<table width=100%>" .
+        "<tr>" . 
+	  "<td style='text-align:center;width: 80px; padding: 10px'><img src='" .
+            (empty($error) ? "/assets/apps/submit-app-success-icon.png" : "/assets/apps/submit-app-fail-icon.png") . "'>" .
+          "</td>" .
+	  "<td style='padding: 10px; vertical-align:middle;'>" .
+            (empty($error) ? 
+           "<strong>Application Submitted Successfully</strong><br>" . 
+           "Your application will be reviewed and, once accepted, will be added to the " . 
+           "<a href='#'>Crosswalk Applications</a> page." : 
+           "<strong>Submission Error</strong><br>" . 
+           "The application submission failed.  The error returned was:<br><br>" . $error) . 
+         "</td>" .
+	"</tr>" . 
+      "</table>";
+
+    return $ret;
+}
+
 $db = new mysqli('localhost', 'xwalkweb', 'webapps', 'xwalk');
 if ($db->connect_errno) {
-    echo "Connection failed: " . $db->connect_error;
+    echo createReturnDiv ("Error: Unable to connect to xwalk database: " . $db->connect_error);
     exit;
 }
-echo "Connect great boys" . "<br>";
-
 
     //$name = $_POST['name'];
     //$author = $_POST['author'];
@@ -29,23 +48,21 @@ echo "Connect great boys" . "<br>";
     $notes = mysqli_real_escape_string($db, $_POST['notes']);
 
     // Validate input
-    echo "App name: " . $name . ", Author: " . $author . "<br>";
-    if (strlen($name) == 0 || strlen($author) == 0) {
-        echo("<br>Nothing added to DB this time. Empty values<br>");
+    if (strlen($name) == 0 || strlen($author) == 0 || strlen(email)==0) {
+        echo createReturnDiv ("Error: One of the required form fields is empty. Application submission denied.");
         exit;
     }
 
 // Insert values into DB
-$cmd = "INSERT INTO xwalk_apps (name, author) VALUES ('$name', '$author')";
-// insert into xwalk_apps (appid,name,author,publish_date,num_downloads,image) values ("1","Sudoku","S-Man Inc.","2015-02-04","10000","sudoku64.jpg");
-
-echo "About to execute cmd: " . $cmd . "<br>";
+$cmd = "INSERT INTO xwalk_apps (name, author, author_url, google_play_url, publish_date, num_downloads, price, size, category, version) 
+       VALUES ('$name', '$author', '$authorUrl', '$googleUrl', '$publishDate', '$downloads', '$price', '$size', '$category', '$version')";
 $result = $db->query($cmd);
-if ($result) {
-    echo ("<br>App inserted successfully!");
+if (!$result) {
+    echo createReturnDiv ("Error: Application ($name) could not be added to the xwalk application database. " . $db->error);
 } else {
-	echo "<br>Error: App not inserted. " . $db->error;
+    echo createReturnDiv();
 }
+
 // Close connection
 $db->close();
 

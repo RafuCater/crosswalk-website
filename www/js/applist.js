@@ -1,26 +1,30 @@
 
+
 $(document).ready(function() {
   $("#datepicker").datepicker();
 });
 
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
                   "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var goodImage = false;
 
 // Load icon image when image selected and show in template
 function onImgSelect(input) {
-  if (input.files['length'] != 1 || 
-  !input.files[0].type.match('image.*')) {
-    alert ("The file selected was not an image");
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function (e) {
-      $('#pvwImg')
-      .attr('src', e.target.result);
-  };
-  reader.readAsDataURL(input.files[0]);
+    if (input.files['length'] != 1 || 
+        !input.files[0].type.match('image.*')) {
+        alert ("The file selected was not an image");
+        goodImage = false;
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        $('#pvwImg')
+            .attr('src', e.target.result);
+    };
+    reader.readAsDataURL(input.files[0]);
+    goodImage = true;
 }
-  
+
 function onGooglePlayUrlChange(input) {
   $('#pvwImg').attr ("title", "On click URL: " + input.value);
 }
@@ -60,18 +64,65 @@ function onDownloadsChange(input) {
 }
 function onPriceChange(input) {}	  
 
+
+/*
+function createPreviewHtml() {
+    var output = 
+"    <div class='appDisplayPvw'> \
+      <div class='appCube' id='pvwCube'> \
+        <div class='appLabel' id='pvwLabel'>" + $('[name=name]').val() + "</div> \
+        <img class='appImg' id='pvwImg'  \
+             src='/assets/apps/missing-image.jpg' \
+             title="<Google Play URL>"/>
+        <div class='appDetailLabel'>
+          <div class='appAuthor' id='pvwAuthor' 
+               title="On click URL: <Author URL>">Author</div>
+          <div id='pvwPublishDate'>Published: &lt;TBD&gt;</div>
+          <div id='pvwDownloads'>Downloads: &lt;TBD&gt;</div>
+        </div>
+      </div>
+      <div class='appPreviewLabel'>Display Preview</div>
+    </div>
+}
+*/
+
 //--------- App Insert into DB from form ---------------
 
 $(".appSubmitForm").submit (function() { 
-    return false; //prevent the page from refreshing
+    return false; //prevent page from refreshing
 });
 
+
+function isEmpty(val) {
+    return $.trim(val) == '';
+}
+
 $(".appSubmitBtn").click (function() {
+    jQuery('html,body').animate({scrollTop:0},0);
+    if (isEmpty($('input[name=name]').val()) || 
+        isEmpty($('input[name=imageFile]').val()) ||
+        isEmpty($('input[name=author').val()) ||
+        isEmpty($('input[name=email]').val()) || 
+        goodImage == false) {
+
+        alert ("Error: One or more required fields were empty or not the correct format.");
+        if (!goodImage) {
+            $('input[name=imageFile]').focus();
+        }
+        return;
+    }
+
+    alert ("about to post...");
     $.post( 
-	    $(".appSubmitForm").attr("action"),
-	    $(".appSubmitForm :input").serializeArray(),
-	    function(result){
-            $("#appSubmitResult").html(result);
-	    }
+	$(".appSubmitForm").attr("action"),
+	$(".appSubmitForm :input").serializeArray(),
+	function (result) {
+            alert (result);
+            $(".appSubmitResult").html(result);
+            $(".appSubmitDiv").css("display","none");
+            $(".appResultDiv").css("display","block");
+            alert ("done");
+        }
      );
 });
+
