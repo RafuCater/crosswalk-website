@@ -3,7 +3,8 @@
   <h2>Submit Crosswalk Application</h2>
   Fill in at least the required fields below to submit your application to be displayed on the <a href="/documentation/community/apps.php">Application Page</a>. Thank you for taking advantage of the Crosswalk Project!
 
-  <form class="appSubmitForm" action="app-submit.php" method="post">
+  <form class="appSubmitForm" action="app-submit.php" method="post"
+        enctype="multipart/form-data">
 
     <!-- preview item -->
     <div class='appDisplayPvw'>
@@ -24,6 +25,10 @@
 
     <fieldset class="appSubmitMain">
       <legend>App Details</legend>
+      <p class="ignoreMe">
+        <label>Title*: </label>
+        <input name="title" type="text" maxlength="50" oninput="onAppTitleChange(this)" />
+      </p>
       <p style="padding-top:0px">
         <label>Google Play URL: </label>
         <input name="googleUrl" class="url" type="url" autofocus placeholder="http://" oninput="onGooglePlayUrlChange(this)"/>
@@ -34,8 +39,8 @@
       </p>
       <p>
         <label>Image*: </label>
-	<input name="imageFile" type="file" accept="image/x-png, image/gif, image/jpeg" 
-               onchange="onImgSelect(this)" required />
+        <input type="hidden" name="MAX_FILE_SIZE" value="2000000" />
+	<input name="imageFile" type="file" accept="image/x-png, image/gif, image/jpeg" onchange="onImgSelect(this)" required />
       </p>
       <p>
         <label>Author / Company*: </label>
@@ -47,7 +52,7 @@
       </p>
       <p>
 	<label>Email*: </label>
-	<input name="email" type="email" name="email" placeholder="Enter a valid email address" required>
+	<input name="email" type="email" name="email" placeholder="Enter a valid email address" required />
       </p>
       <p>
         <label>Publish date: </label>
@@ -63,13 +68,13 @@
       </p>
       <p>
         <label>Size: </label>
-	<input name="size" class="size" type="text" pattern="\d+" maxlength="5" value="0"><label class="left">MB</label>
+	<input name="size" class="size" type="text" pattern="\d+" maxlength="5" value="0" /><label class="left">MB</label>
       </p>
       <p>
 	<label>Architectures supported: </label>
-	<input name="archArm" type="checkbox" value="0x1"/><label class="arch">ARM</label>
-	<input name="archx86" type="checkbox" value="0x2"/><label class="arch">x86</label>
- 	<input name="archx86_64" type="checkbox" value="0x4"/><label class="arch">x86_64</label>
+	<input name="archArm" type="checkbox" value="0x1"/><label class="arch" />ARM</label>
+	<input name="archx86" type="checkbox" value="0x2"/><label class="arch" />x86</label>
+ 	<input name="archx86_64" type="checkbox" value="0x4"/><label class="arch" />x86_64</label>
       </p>
       <p>
    	<label>Intel XDK: </label>
@@ -117,9 +122,9 @@
         <label>Notes: </label>
         <textarea name="notes" placeholder="Optional information for submission"></textarea>
       </p>
-      <input name="preview" type="hidden">
-
-      <p><label class="rqdLabel">* required fields</label></p>
+      <p>
+        <label class="rqdLabel">* required fields</label>
+      </p>
     </fieldset>
 
     <fieldset class="appSubmitAgreement">
@@ -127,7 +132,7 @@
       <p class="appAccept">
         <input type="checkbox" required value=""/>
         <label>*  I accept the <a href="#">Terms and Conditions</a>.</label>
-	<button class="appSubmitBtn">Submit App &raquo;</button>
+	<button class="appSubmitBtn" type="submit">Submit App &raquo;</button>
       </p>
     </fieldset>
   </form> <!-- appSubmitForm -->
@@ -141,6 +146,7 @@
 </div> <!-- appResultDiv -->
 
 <script src="/js/applist.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>

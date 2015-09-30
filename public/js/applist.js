@@ -1,21 +1,33 @@
 
-
-$(document).ready(function() {
-  $("#datepicker").datepicker();
-});
-
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
                   "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var goodImage = false;
 
 // Load icon image when image selected and show in template
 function onImgSelect(input) {
+
+    // Check file size!/Full File API support.
+    var fileApiSupported = (window.FileReader && window.File && window.FileList && window.Blob);
+    if (!fileApiSupported) {
+        $('#pvwImg').attr('src', "/assets/apps/no-file-api.jpg");
+        goodImage = true;  //just guess since we can't get more details
+        return;
+    }
+    
+    //make sure it is an image format
     if (input.files['length'] != 1 || 
         !input.files[0].type.match('image.*')) {
         alert ("The file selected was not an image");
         goodImage = false;
         return;
     }
+    //check size (limit 1MB, should be ~4K)
+    if (input.files[0].size > 1000000) {
+        alert ("The image file is too large. Limit 1MB. 192x192px recommended dimensions.");
+        goodImage = false;
+        return;
+    }
+    //load preview window
     var reader = new FileReader();
     reader.onload = function (e) {
         $('#pvwImg')
@@ -88,17 +100,88 @@ function createPreviewHtml() {
 
 //--------- App Insert into DB from form ---------------
 
-$(".appSubmitForm").submit (function() { 
-    return false; //prevent page from refreshing
-});
-
 
 function isEmpty(val) {
     return $.trim(val) == '';
 }
 
+$(document).ready(function()
+{
+    $("#datepicker").datepicker();
+
+
+    //Callback handler for form submit event
+    $(".appSubmitForm").submit(function(e) {
+        e.stopPropagation(); // Stop stuff happening
+        e.preventDefault(); //Prevent Default action. 
+
+        //double-check values
+        $('html,body').animate({scrollTop:0},0);
+        if (isEmpty($('input[name=name]').val()) || 
+            isEmpty($('input[name=imageFile]').val()) ||
+            isEmpty($('input[name=author').val()) ||
+            isEmpty($('input[name=email]').val()) || 
+            goodImage == false) {
+
+            alert ("Error: One or more required fields were empty or not the correct format.");
+            if (!goodImage) {
+                $('input[name=imageFile]').focus();
+            }
+            return;
+        }
+
+        // spinner: $("#multi-msg").html("<img src='loading.gif'/>");
+        var formObj = $(this);
+        var formURL = formObj.attr("action");
+
+        if (window.FormData == undefined) {  // for HTML5 browsers
+            alert ("old browser.  No upload");
+            return;
+        }
+
+        var formData = new FormData(this);
+
+        alert ("about to ajax this baby");
+        $.ajax({
+            url: formURL,
+            type: 'POST',
+            data:  formData,
+            mimeType:"multipart/form-data",
+            cache: false,
+            contentType: false,
+            processData:false,
+            success: function(data, textStatus, jqXHR) {
+                if (typeof data.error === 'undefined') {
+                    alert ("real success");
+                    $(".appSubmitResult").html('<pre><code>' + data + '</code></pre>');
+                } else {
+                    alert ("fake success");
+                    $(".appSubmitResult").html('<pre><code>'+data+'...error: '+data.error+'</code></pre>');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert (textStatus);
+                $(".appSubmitResult").html('<pre><code class="prettyprint">AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</code></pre>');
+            }          
+        });
+
+        $(".appSubmitDiv").css("display","none");
+        $(".appResultDiv").css("display","block");
+        alert ("finished");
+    }); 
+});
+
+
+
+/*
+
+$(".appSubmitForm").submit (function() { 
+    return false; //prevent page from refreshing
+});
+
+
 $(".appSubmitBtn").click (function() {
-    jQuery('html,body').animate({scrollTop:0},0);
+    $('html,body').animate({scrollTop:0},0);
     if (isEmpty($('input[name=name]').val()) || 
         isEmpty($('input[name=imageFile]').val()) ||
         isEmpty($('input[name=author').val()) ||
@@ -122,7 +205,8 @@ $(".appSubmitBtn").click (function() {
             $(".appSubmitDiv").css("display","none");
             $(".appResultDiv").css("display","block");
             alert ("done");
-        }
+p        }
      );
 });
 
+*/

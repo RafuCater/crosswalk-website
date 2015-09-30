@@ -361,6 +361,12 @@ p.appAccept label {
   text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
 }
 
+//----- Style for spam/bot-catching hidden form field "Title" -----
+.ignoreMe { 
+  position: fixed !important;
+  top: -5000px !important;
+}
+
 // --------- Style for app submit results
 
 div.appResultDiv {
