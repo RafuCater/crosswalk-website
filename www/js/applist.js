@@ -109,26 +109,10 @@ $(document).ready(function()
 {
     $("#datepicker").datepicker();
 
-
     //Callback handler for form submit event
     $(".appSubmitForm").submit(function(e) {
         e.stopPropagation(); // Stop stuff happening
         e.preventDefault(); //Prevent Default action. 
-
-        //double-check values
-        $('html,body').animate({scrollTop:0},0);
-        if (isEmpty($('input[name=name]').val()) || 
-            isEmpty($('input[name=imageFile]').val()) ||
-            isEmpty($('input[name=author').val()) ||
-            isEmpty($('input[name=email]').val()) || 
-            goodImage == false) {
-
-            alert ("Error: One or more required fields were empty or not the correct format.");
-            if (!goodImage) {
-                $('input[name=imageFile]').focus();
-            }
-            return;
-        }
 
         // spinner: $("#multi-msg").html("<img src='loading.gif'/>");
         var formObj = $(this);
@@ -171,42 +155,3 @@ $(document).ready(function()
     }); 
 });
 
-
-
-/*
-
-$(".appSubmitForm").submit (function() { 
-    return false; //prevent page from refreshing
-});
-
-
-$(".appSubmitBtn").click (function() {
-    $('html,body').animate({scrollTop:0},0);
-    if (isEmpty($('input[name=name]').val()) || 
-        isEmpty($('input[name=imageFile]').val()) ||
-        isEmpty($('input[name=author').val()) ||
-        isEmpty($('input[name=email]').val()) || 
-        goodImage == false) {
-
-        alert ("Error: One or more required fields were empty or not the correct format.");
-        if (!goodImage) {
-            $('input[name=imageFile]').focus();
-        }
-        return;
-    }
-
-    alert ("about to post...");
-    $.post( 
-	$(".appSubmitForm").attr("action"),
-	$(".appSubmitForm :input").serializeArray(),
-	function (result) {
-            alert (result);
-            $(".appSubmitResult").html(result);
-            $(".appSubmitDiv").css("display","none");
-            $(".appResultDiv").css("display","block");
-            alert ("done");
-p        }
-     );
-});
-
-*/
