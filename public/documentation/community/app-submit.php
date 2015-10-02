@@ -1,5 +1,8 @@
 <?php
 
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+
 // functions in this file work like this (except printResultDiv): 
 //    return bool for success/fail, 
 //    will set global $retVal before exit (contains error msg or function-specific value)
@@ -25,7 +28,7 @@ function printResultDiv ($error) {
            "<strong>Submission Error</strong><br>" . 
            "The application submission failed.<br><br>" . $error . 
            "<br><br>We are sorry for the error. If the error appears to be due to incorrect form data, please check " .
-           "your values and <a href='/documentation/community/app-submit.html'>resubmit the application</a>.") . 
+           "your values and <a onclick='showFormDiv();return false;' href=''>resubmit the application</a>.") .
          "</td>" .
 	"</tr>" . 
       "</table>";
@@ -36,50 +39,64 @@ function addRecordToDb () {
     global $retVal;
     global $valueArray;
 
+    $retVal = "";
     if (!empty($valueArray['spam'])) {
         //spam.  prettend to succeed with no warning
         return true;
     }
-    
-    $db  = new mysqli('localhost', 'xwalkweb', 'webapps', 'xwalk');
-    if ($db->connect_errno) {
-        $retVal = "Unable to connect to database. " . $db->connect_error;
+
+    try {
+        $mysqli  = new mysqli('localhost', 'xwalkweb', 'webapps', 'xwalk');
+        if ($mysqli->connect_errno) {
+            throw new RuntimeException("Unable to connect to database. " . $mysqli->connect_error);
+        }
+
+        // Insert values into DB
+        if (!($stmt = $mysqli->prepare ("INSERT INTO xwalk_apps (google_play_url, name, author, author_url, email, publish_date, downloads, price, size, architecture, xdk, category, version, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"))) {
+            throw new RuntimeException("Unable to prepare database insert statement." . $mysqli->error);
+        }
+            
+        //14 values
+        if (!($stmt->bind_param ('ssssssidisisss', 
+                           $valueArray['googleUrl'],
+                           $valueArray['name'],
+                           $valueArray['author'],
+                           $valueArray['authorUrl'],
+                           $valueArray['email'],
+                           $valueArray['publishDate'],
+                           $valueArray['downloads'],
+                           $valueArray['price'], 
+                           $valueArray['size'],
+                           $valueArray['arch'],
+                           $valueArray['xdk'],
+                           $valueArray['category'],
+                           $valueArray['version'],
+                           $valueArray['notes']))) {
+            throw new RuntimeException("Unable to bind parameters for databaes insert statement" . $stmt->error);
+        }
+        if (!$stmt->execute()) {
+            throw new RuntimeException("Unable to execute database insert statement." . $stmt->error);
+        }
+        $stmt->close();
+    } catch (RuntimeException $e) {
+        $mysqli->close();
+        $retVal = $e->getMessage();
         return false;
     }
-
-    // Insert values into DB
-    $cmd = "INSERT INTO xwalk_apps (google_play_url, name, author, author_url, email, publish_date, num_downloads, price, size, xdk, category, version, notes) 
-            VALUES (    $valueArray['googleUrl'],
-                        $valueArray['name'],
-                        $valueArray['author'],
-                        $valueArray['authorUrl'],
-                        $valueArray['email'],
-                        $valueArray['publishDate'],
-                        $valueArray['downloads'],
-                        $valueArray['price'], 
-                        $valueArray['size'],
-                        //TBD: arch
-                        $valueArray['xdk'],
-                        $valueArray['category'],
-                        $valueArray['version'],
-                        $valueArray['notes']";
-
-    $result = $db->query($cmd);
-    if (!$result) {
-        $retVal = "Error: The application \"{$name}\" could not be added to the xwalk application database. (" . $db->error . ")";
-        $db->close();
-        return false;
-    } 
-    $db->close();
+    $mysqli->close();
     return true;
 }
+
 
 function uploadImageFile() {
     global $retVal;
     global $valueArray;
 
+    $retVal = "";
 //    $uploadDir = "/srv/www/stg.crosswalk-project.org/_db-app-images/";
-    $uploadDir = "/home/bob/src/crosswalk/website/_db-app-images/";
+    $uploadDir = "/home/bob/src/crosswalk/website/_db-app-images";
+    // check website permissions: ps aux | egrep '(apache|httpd)' 
+
 
     $errArray = array(UPLOAD_ERR_INI_SIZE  => 'The image file size exceeds the 2MB allowed limit.',
                       UPLOAD_ERR_FORM_SIZE => 'The image file size exceeds the 2MB allowed limit.',
@@ -90,7 +107,6 @@ function uploadImageFile() {
 
     try {
         // Check if undefined, multiple files, or $_FILES corruption attack
-        echo "checking!";
         if (!isset($_FILES["imageFile"]['error']) ||
              is_array($_FILES['imageFile']['error'])) {
             throw new RuntimeException('Invalid form parameters.');
@@ -120,13 +136,9 @@ function uploadImageFile() {
             true)) {
             throw new RuntimeException('Invalid file format. Image file must be jpg, png, or gif.');
         }
-        echo '<br><br>GOT TO HERE<br><br>';
 
         // Get unique name for file (we will store in DB)
-        $uniqueName = sprintf ("%s/%s/%s", $uploadDir, sha1_file($tmpName), $ext);
-
-        echo "<br><br>unuqueName: $uniqueName<br><br>";
-
+        $uniqueName = sprintf ("%s/%s.%s", $uploadDir, sha1_file($tmpName), $ext);
         if (!move_uploaded_file ($tmpName, $uniqueName)) {
             throw new RuntimeException('Failed to move uploaded image file.');
         }
@@ -138,30 +150,52 @@ function uploadImageFile() {
     return true;
 }
 
+function sanitizeInput($data) {
+    $data = trim ($data);
+    $data = stripslashes ($data);
+    $data = htmlspecialchars ($data);
+    return $data;
+}
 
 function getFormValues() {
     global $retVal;
     global $valueArray;
+    $retVal = "";
 
-    //insecure way: $name = $_POST['name'];
-    $valueArray['spam']  =  mysqli_real_escape_string($db, $_POST['title']);
-    $valueArray['googleUrl'] = mysqli_real_escape_string($db, $_POST['googleUrl']);
-    $valueArray['name']  =   mysqli_real_escape_string($db, $_POST['name']);
-    $valueArray['author']  = mysqli_real_escape_string($db, $_POST['author']);
-    $valueArray['authorUrl']  = mysqli_real_escape_string($db, $_POST['authorUrl']);
-    $valueArray['email']  = mysqli_real_escape_string($db, $_POST['email']);
-    $valueArray['publishDate']  = mysqli_real_escape_string($db, $_POST['publishDate']);
-    $valueArray['downloads']  = mysqli_real_escape_string($db, $_POST['downloads']);
-    $valueArray['price']  = mysqli_real_escape_string($db, $_POST['price']);
-    $valueArray['size']  = mysqli_real_escape_string($db, $_POST['size']);
-   //TBD: arch
-    $valueArray['xdk']  = mysqli_real_escape_string($db, $_POST['xdk']);
-    $valueArray['category']  = mysqli_real_escape_string($db, $_POST['category']);
-    $valueArray['version']  = mysqli_real_escape_string($db, $_POST['version']);
-    $valueArray['notes']  = mysqli_real_escape_string($db, $_POST['notes']);
+    $valueArray['spam']  =     sanitizeInput ($_POST['title']);
+    $valueArray['googleUrl'] = sanitizeInput ($_POST['googleUrl']);
+    $valueArray['name']  =     sanitizeInput ($_POST['name']);
+    $valueArray['author']  =   sanitizeInput ($_POST['author']);
+    $valueArray['authorUrl'] = sanitizeInput ($_POST['authorUrl']);
+    $valueArray['email']  =    sanitizeInput ($_POST['email']);
+    $valueArray['publishDate'] = date('Y-m-d', strtotime(sanitizeInput ($_POST['publishDate'])));
+    $valueArray['downloads'] = sanitizeInput ($_POST['downloads']);
+    $valueArray['price'] =     sanitizeInput ($_POST['price']);
+    $valueArray['size'] =      sanitizeInput ($_POST['size']);
+
+    $arch = "";
+    if (isset($_POST['archArm']) && $_POST['archArm']=='1') {
+        $arch .= 'arm,';
+    }
+    if (isset($_POST['archx86']) && $_POST['archx86']=='1') {
+        $arch .= 'x86,';
+    }
+    if (isset($_POST['archx86_64']) && $_POST['archx86_64']=='1') {
+        $arch .= 'x86_64,';
+    }
+    $valueArray['arch'] = rtrim($arch, ",");
+
+    if (isset($_POST['xdk']) && $_POST['xdk']=='1') {
+        $valueArray['xdk'] = 1;
+    }
+
+    $valueArray['category'] =  sanitizeInput ($_POST['category']);
+    $valueArray['version'] =   sanitizeInput ($_POST['version']);
+    $valueArray['notes'] =     sanitizeInput ($_POST['notes']);
 
     // Validate input
-    if (strlen($valueArray['name'])==0 || strlen($valueArray['author'])==0 || strlen($valueArray['email'])==0) {
+    if (strlen($valueArray['name'])==0 || strlen($valueArray['author'])==0 || 
+        strlen($valueArray['email'])==0) {
         $retVal = "One of the required form fields is empty. Application submission denied.";        
         return false;
     }
@@ -171,10 +205,11 @@ function getFormValues() {
 // A quick check that there are values
 function quickValidate() {
     global $retVal;
+    $retVal = "";
 
-    if (!isset($_POST["name"]) ||
-        !isset($_FILES["imageFile"]['error']) ||
-        !isset($_FILES["imageFile"]['tmp_nam'])) {
+    if (!isset($_POST['name']) ||
+        !isset($_FILES['imageFile']['error']) ||
+        !isset($_FILES['imageFile']['tmp_name'])) {
         $retVal = "One or more form parameters are invalid. Application submission rejected.";
         return false;
     }
@@ -182,10 +217,14 @@ function quickValidate() {
 }
 
 
-
 // ------ Start --------------
-print_r ($_POST);
-print_r ($_FILES);
+// needed?  if (!$_SERVER["REQUEST_METHOD"] == "POST") {
+
+//echo "<pre><code>";
+//print_r ($_POST);
+//print_r ($_FILES);
+//echo "</code></pre>";
+
 
 if (!quickValidate()) {
     printResultDiv ($retVal);
@@ -203,29 +242,34 @@ if (!addRecordToDb ()) {
     printResultDiv ($retVal);
     exit;
 }
-// Success, print with no parameters
-printResultDiv ();
+// Success
+printResultDiv (null);
 
+//echo "<pre><code>";
+//print_r ($valueArray);
+//echo "</code></pre>";
 
 /*
-+----------------+---------------+------+-----+---------+-------+
-| Field          | Type          | Null | Key | Default | Extra |
-+----------------+---------------+------+-----+---------+-------+
-| appid          | int(11)       | NO   | PRI | 0       |       |
-| name           | varchar(255)  | NO   |     | NULL    |       |
-| author         | varchar(100)  | NO   |     | NULL    |       |
-| publish_date   | date          | YES  |     | NULL    |       |
-| num_downloads  | int(11)       | YES  |     | NULL    |       |
-| image          | varchar(255)  | YES  |     | NULL    |       |
-| price          | decimal(6,2)  | YES  |     | NULL    |       |
-| size           | int(11)       | YES  |     | NULL    |       |
-| architecture   | bit(6)        | YES  |     | NULL    |       |
-| xdk            | bit(1)        | YES  |     | NULL    |       |
-| category       | varchar(100)  | YES  |     | NULL    |       |
-| version        | varchar(100)  | YES  |     | NULL    |       |
-| description    | varchar(500)  | YES  |     | NULL    |       |
-| author_url     | varchar(2000) | YES  |     | NULL    |       |
-| goole_play_url | varchar(2000) | YES  |     | NULL    |       |
-+----------------+---------------+------+-----+---------+-------+
++-----------------+---------------+------+-----+---------+----------------+
+| Field           | Type          | Null | Key | Default | Extra          |
++-----------------+---------------+------+-----+---------+----------------+
+| appid           | int(11)       | NO   | PRI | NULL    | auto_increment |
+| status          | varchar(20)   | NO   |     | NULL    |                |
+| name            | varchar(255)  | NO   |     | NULL    |                |
+| image           | varchar(255)  | NO   |     | NULL    |                |
+| author          | varchar(100)  | NO   |     | NULL    |                |
+| author_url      | varchar(2000) | YES  |     | NULL    |                |
+| email           | varchar(100)  | NO   |     | NULL    |                |
+| publish_date    | date          | YES  |     | NULL    |                |
+| downloads       | int(11)       | YES  |     | NULL    |                |
+| price           | decimal(6,2)  | YES  |     | NULL    |                |
+| size            | int(11)       | YES  |     | NULL    |                |
+| architecture    | varchar(100)  | YES  |     | NULL    |                |
+| xdk             | bit(1)        | YES  |     | NULL    |                |
+| category        | varchar(100)  | YES  |     | NULL    |                |
+| version         | varchar(100)  | YES  |     | NULL    |                |
+| notes           | varchar(500)  | YES  |     | NULL    |                |
+| google_play_url | varchar(2000) | YES  |     | NULL    |                |
++-----------------+---------------+------+-----+---------+----------------+
 */
 

@@ -27,28 +27,34 @@
       <legend>App Details</legend>
       <p class="ignoreMe">
         <label>Title*: </label>
-        <input name="title" type="text" maxlength="50" oninput="onAppTitleChange(this)" />
+        <input name="title" type="text" maxlength="50" 
+               oninput="onAppTitleChange(this.value)" />
       </p>
       <p style="padding-top:0px">
         <label>Google Play URL: </label>
-        <input name="googleUrl" class="url" type="url" autofocus placeholder="http://" oninput="onGooglePlayUrlChange(this)"/>
+        <input name="googleUrl" class="url" type="url" autofocus placeholder="http://" 
+               oninput="onGooglePlayUrlChange(this.value)"/>
       </p>
       <p>
         <label>App name*: </label>
-        <input name="name" id="n" type="text" maxlength="50" oninput="onAppNameChange(this)" required />
+        <input name="name" id="n" type="text" maxlength="50" 
+               oninput="onAppNameChange(this.value)" required />
       </p>
       <p>
         <label>Image*: </label>
         <input type="hidden" name="MAX_FILE_SIZE" value="2000000" />
-	<input name="imageFile" type="file" accept="image/x-png, image/gif, image/jpeg" onchange="onImgSelect(this)" required />
+	<input name="imageFile" type="file" accept="image/x-png, image/gif, image/jpeg" 
+               onchange="onImgSelect(this)" required />
       </p>
       <p>
         <label>Author / Company*: </label>
-        <input name="author" type="text" maxlength="30" oninput="onAuthorChange(this)" required/>
+        <input name="author" type="text" maxlength="30" 
+               oninput="onAuthorChange(this.value)" required/>
       </p>
       <p>
         <label >Author / Company URL: </label>
-        <input name="authorUrl" type="url" placeholder="http://" pattern="https?://.+" oninput="onAuthorUrlChange(this)"/>
+        <input name="authorUrl" type="url" placeholder="http://" pattern="https?://.+" 
+               oninput="onAuthorUrlChange(this.value)"/>
       </p>
       <p>
 	<label>Email*: </label>
@@ -56,62 +62,65 @@
       </p>
       <p>
         <label>Publish date: </label>
-	<input name="publishDate" type="date" id="datepicker" maxlength="10" onchange="onPublishDateChange(this)"/>
+	<input name="publishDate" type="date" id="datepicker" maxlength="10" 
+               onchange="onPublishDateChange(this.value)"/>
       </p>
       <p>
         <label>Number of downloads: </label>
-	<input name="downloads" class="downloads" type="text" pattern="[0-9]+" maxlength="10" oninput="onDownloadsChange(this)"/>
+	<input name="downloads" class="downloads" type="text" maxlength="12" 
+               oninput="onDownloadsChange(this.value)" pattern="^(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$"/>
       <p>
         <label>App price ($): </label>
-        <input name="price" type="text" maxlength="8" oninput="onPriceChange(this)"
-               pattern="^\\$?(([1-9](\\d*|\\d{0,2}(,\\d{3})*))|0)(\\.\\d{1,2})?$"/>
+        <input name="price" type="text" maxlength="6" 
+               oninput="onPriceChange(this.value)" pattern="\d+(\.\d{2}){0,1}" />
       </p>
       <p>
         <label>Size: </label>
-	<input name="size" class="size" type="text" pattern="\d+" maxlength="5" value="0" /><label class="left">MB</label>
+	<input name="size" class="size" type="text" pattern="\d+" maxlength="5" value="0" />
+        <label class="left">MB</label>
       </p>
       <p>
 	<label>Architectures supported: </label>
-	<input name="archArm" type="checkbox" value="0x1"/><label class="arch" />ARM</label>
-	<input name="archx86" type="checkbox" value="0x2"/><label class="arch" />x86</label>
- 	<input name="archx86_64" type="checkbox" value="0x4"/><label class="arch" />x86_64</label>
+	<input name="archArm" type="checkbox" value="1" /><label class="arch" />ARM</label>
+	<input name="archx86" type="checkbox" value="1"/><label class="arch" />x86</label>
+ 	<input name="archx86_64" type="checkbox" value="1"/><label class="arch" />x86_64</label>
       </p>
       <p>
    	<label>Intel XDK: </label>
-        <input name="xdk" type="checkbox" value="0x1"/><label class="left">Built with the Intel XDK</label>
+        <input name="xdk" type="checkbox" value="1"/><label class="left">Built with the Intel XDK</label>
       </p>
       <p>
 	<label>Category: </label>
         <select name="category">
 	  <option></option>
-          <option value="1">Arcade Action</option>
-	  <option value="2">Books Reference</option>
-	  <option value="3">Brain Puzzle</option>
-	  <option value="4">Business</option>
-	  <option value="5">Cards/Casino</option>
-	  <option value="6">Casual</option>
-	  <option value="7">Communication</option>
-	  <option value="8">Education</option>
-	  <option value="9">Entertainment</option>
-	  <option value="10">Finance</option>
-	  <option value="11">Health Fitness</option>
-	  <option value="12">Libraries Demo</option>
-	  <option value="13">Lifestyle</option>
-	  <option value="14">Media Video</option>
-	  <option value="15">Medical</option>
-	  <option value="16">Music Audio</option>
-	  <option value="17">News Magazines</option>
-	  <option value="18">Personalization</option>
-	  <option value="19">Photography</option>
-	  <option value="20">Productivity</option>
-	  <option value="21">Racing</option>
-	  <option value="22">Social</option>
-	  <option value="23">Shopping</option>
-	  <option value="24">Sports</option>
-	  <option value="25">Tools</option>
-	  <option value="26">Transportation</option>
-	  <option value="27">Travel Local</option>
-	  <option value="28">Weather</option>
+          <option value="Arcade Action">Arcade Action</option>
+	  <option value="Books Reference">Books Reference</option>
+	  <option value="Brain Puzzle">Brain Puzzle</option>
+	  <option value="Business">Business</option>
+	  <option value="Cards/Casino">Cards/Casino</option>
+	  <option value="Casual">Casual</option>
+	  <option value="Communication">Communication</option>
+	  <option value="Education">Education</option>
+	  <option value="Entertainment">Entertainment</option>
+	  <option value="Finance">Finance</option>
+	  <option value="Health Fitness">Health Fitness</option>
+	  <option value="Libraries Demo">Libraries Demo</option>
+	  <option value="Lifestyle">Lifestyle</option>
+	  <option value="Media Video">Media Video</option>
+	  <option value="Medical">Medical</option>
+	  <option value="Music Audio">Music Audio</option>
+	  <option value="News Magazines">News Magazines</option>
+	  <option value="Personalization">Personalization</option>
+	  <option value="Photography">Photography</option>
+	  <option value="Productivity">Productivity</option>
+	  <option value="Racing">Racing</option>
+	  <option value="Social">Social</option>
+	  <option value="Shopping">Shopping</option>
+	  <option value="Sports">Sports</option>
+	  <option value="Tools">Tools</option>
+	  <option value="Transportation">Transportation</option>
+	  <option value="Travel Local">Travel Local</option>
+	  <option value="Weather">Weather</option>
         </select>
       </p>
       <p>

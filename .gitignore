@@ -28,3 +28,6 @@ local-config.php
 
 # Assets being edited locally
 assets-raw/
+
+# images stored on server
+_db-app-images

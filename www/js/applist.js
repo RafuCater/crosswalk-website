@@ -6,7 +6,7 @@ var goodImage = false;
 // Load icon image when image selected and show in template
 function onImgSelect(input) {
 
-    // Check file size!/Full File API support.
+    // Check file size!/Full file API support.
     var fileApiSupported = (window.FileReader && window.File && window.FileList && window.Blob);
     if (!fileApiSupported) {
         $('#pvwImg').attr('src', "/assets/apps/no-file-api.jpg");
@@ -23,58 +23,72 @@ function onImgSelect(input) {
     }
     //check size (limit 1MB, should be ~4K)
     if (input.files[0].size > 1000000) {
-        alert ("The image file is too large. Limit 1MB. 192x192px recommended dimensions.");
+        alert ("The image file is too large. Limit 1MB. 300x300px recommended dimensions.");
         goodImage = false;
         return;
     }
     //load preview window
     var reader = new FileReader();
     reader.onload = function (e) {
-        $('#pvwImg')
-            .attr('src', e.target.result);
+        $('#pvwImg').attr('src', e.target.result);
     };
     reader.readAsDataURL(input.files[0]);
     goodImage = true;
 }
 
-function onGooglePlayUrlChange(input) {
-  $('#pvwImg').attr ("title", "On click URL: " + input.value);
-}
-function onAppNameChange(input) {
-  $('#pvwLabel').text (input.value);
+function onGooglePlayUrlChange(value) {
+    $('#pvwImg').attr ("title", "On click URL: " + value);
 }
 
-function onAuthorChange(input) {
-  $('#pvwAuthor').text (input.value);
+function onAppNameChange(value) {
+    $('#pvwLabel').text (value);
 }
-function onAuthorUrlChange(input) {
-  $('#pvwAuthor').attr ("title", "On click URL: " + input.value);
+function onAuthorChange(value) {
+    $('#pvwAuthor').text (value);
 }
-function onPublishDateChange(input) {
-  var dateText = input.value;
-  var d = new Date (input.value);
-  if (!isNaN( d.getTime())) {
-    dateText = monthNames[d.getMonth()] + " " + d.getFullYear();
-  }
-  $('#pvwPublishDate').text ("Published: " + dateText);
+function onAuthorUrlChange(value) {
+    $('#pvwAuthor').attr ("title", "On click URL: " + value);
+}
+function onPublishDateChange(value) {
+    var dateText = value;
+    var d = new Date (value);
+    if (!isNaN( d.getTime())) {
+        dateText = monthNames[d.getMonth()] + " " + d.getFullYear();
+    }
+    $('#pvwPublishDate').text ("Published: " + dateText);
 }
 
-function getNumEst (val) {
-  if (isNaN(val) || val=="") {
-    val = "N/A";
-  } else if (val >= 1000 && val < 1000000) {
-    val = ((Math.floor (val/1000))) + "K+";
-  } else if (val >= 1000000 && val < 1000000000) {
-    val = ((Math.floor (val/1000000))) + "M+";
-  } else if (val >= 1000000000) {
-    val = "Whoa!";
-  }
-  return val;                           
+function getNumEst (formVal) {
+    val = formVal.replace(/\,/g,'');
+    if (isNaN(val) || val=="") {
+        val = "N/A";
+    } else if (val >= 1000 && val < 1000000) {
+        val = ((Math.floor (val/1000))) + "K+";
+    } else if (val >= 1000000 && val < 1000000000) {
+        val = ((Math.floor (val/1000000))) + "M+";
+    } else if (val >= 1000000000) {
+        val = "Whoa!";
+    }
+    return val;                           
 }
-function onDownloadsChange(input) {
-  $('#pvwDownloads').text ("Downloads: " + getNumEst(input.value));
+
+function onDownloadsChange(value) {
+    $('#pvwDownloads').text ("Downloads: " + getNumEst(value));
 }
-function onPriceChange(input) {}	  
+function onPriceChange(value) {}  
+
+//update all preview fields (only called when page loaded)
+function updatePreview() {
+    onGooglePlayUrlChange ($("input[name=googleUrl]").val());
+    onAppNameChange ($("input[name=name]").val());
+    onAuthorChange ($("input[name=author]").val());
+    onAuthorUrlChange ($("input[name=authorUrl]").val());
+    onPublishDateChange ($("input[name=publishDate]").val());
+    onDownloadsChange ($("input[name=downloads]").val());
+
+    //Deselect picture.  I don't know how to load it
+    onDownloadsChange ($("input[name=imageFile]").val(""));
+}
 
 
 /*
@@ -98,6 +112,17 @@ function createPreviewHtml() {
 }
 */
 
+
+// If an error occurs, the user can return to their form
+// without losing all their entries via this function
+function showFormDiv() {
+    $('html,body').animate({scrollTop:0},0);
+    $(".appSubmitDiv").css("display","block");
+    $(".appResultDiv").css("display","none");
+}
+
+
+
 //--------- App Insert into DB from form ---------------
 
 
@@ -107,12 +132,34 @@ function isEmpty(val) {
 
 $(document).ready(function()
 {
+    //refresh preview if there are values in form already
+    updatePreview();
+
     $("#datepicker").datepicker();
 
     //Callback handler for form submit event
     $(".appSubmitForm").submit(function(e) {
         e.stopPropagation(); // Stop stuff happening
         e.preventDefault(); //Prevent Default action. 
+
+        //double-check values
+        $('html,body').animate({scrollTop:0},0);
+        if (isEmpty($('input[name=name]').val()) || 
+            isEmpty($('input[name=imageFile]').val()) ||
+            isEmpty($('input[name=author').val()) ||
+            isEmpty($('input[name=email]').val()) || 
+            goodImage == false) {
+
+            alert ("Error: One or more required fields were empty or not the correct format.");
+            if (!goodImage) {
+                $('input[name=imageFile]').focus();
+            }
+            return;
+        }
+        if ($('input[name=price]').val() > 200) {
+            alert ("You wish! Maximum price allowed is $200.");
+            return;
+        }
 
         // spinner: $("#multi-msg").html("<img src='loading.gif'/>");
         var formObj = $(this);
@@ -137,10 +184,10 @@ $(document).ready(function()
             success: function(data, textStatus, jqXHR) {
                 if (typeof data.error === 'undefined') {
                     alert ("real success");
-                    $(".appSubmitResult").html('<pre><code>' + data + '</code></pre>');
+                    $(".appSubmitResult").html(data);
                 } else {
                     alert ("fake success");
-                    $(".appSubmitResult").html('<pre><code>'+data+'...error: '+data.error+'</code></pre>');
+                    $(".appSubmitResult").html(data + 'data.error: <pre><code>'+data.error+'</code></pre>');
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
