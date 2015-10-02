@@ -52,12 +52,12 @@ function addRecordToDb () {
         }
 
         // Insert values into DB
-        if (!($stmt = $mysqli->prepare ("INSERT INTO xwalk_apps (google_play_url, name, author, author_url, email, publish_date, downloads, price, size, architecture, xdk, category, version, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"))) {
+        if (!($stmt = $mysqli->prepare ("INSERT INTO xwalk_apps (google_play_url, name, author, author_url, email, publish_date, downloads, price, size, architecture, xdk, category, version, notes, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"))) {
             throw new RuntimeException("Unable to prepare database insert statement." . $mysqli->error);
         }
             
-        //14 values
-        if (!($stmt->bind_param ('ssssssidisisss', 
+        //15 values
+        if (!($stmt->bind_param ('ssssssidisissss', 
                            $valueArray['googleUrl'],
                            $valueArray['name'],
                            $valueArray['author'],
@@ -71,7 +71,8 @@ function addRecordToDb () {
                            $valueArray['xdk'],
                            $valueArray['category'],
                            $valueArray['version'],
-                           $valueArray['notes']))) {
+                           $valueArray['notes'],
+                           $valueArray['status']))) {
             throw new RuntimeException("Unable to bind parameters for databaes insert statement" . $stmt->error);
         }
         if (!$stmt->execute()) {
@@ -192,6 +193,8 @@ function getFormValues() {
     $valueArray['category'] =  sanitizeInput ($_POST['category']);
     $valueArray['version'] =   sanitizeInput ($_POST['version']);
     $valueArray['notes'] =     sanitizeInput ($_POST['notes']);
+    //add status value (one of "pending", "accepted", "rejected")
+    $valueArray['status'] =    "pending";
 
     // Validate input
     if (strlen($valueArray['name'])==0 || strlen($valueArray['author'])==0 || 

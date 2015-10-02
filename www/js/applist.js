@@ -1,11 +1,14 @@
 
+/*jslint browser: true*/
+/*global $, jQuery, alert*/
+
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
                   "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var goodImage = false;
 
 // Load icon image when image selected and show in template
 function onImgSelect(input) {
-
+    "use strict";
     // Check file size!/Full file API support.
     var fileApiSupported = (window.FileReader && window.File && window.FileList && window.Blob);
     if (!fileApiSupported) {
@@ -15,15 +18,15 @@ function onImgSelect(input) {
     }
     
     //make sure it is an image format
-    if (input.files['length'] != 1 || 
-        !input.files[0].type.match('image.*')) {
-        alert ("The file selected was not an image");
+    if (input.files.length !== 1 ||
+        !(input.files[0].type.match('image.*'))) {
+        alert("The file selected was not an image");
         goodImage = false;
         return;
     }
     //check size (limit 1MB, should be ~4K)
     if (input.files[0].size > 1000000) {
-        alert ("The image file is too large. Limit 1MB. 300x300px recommended dimensions.");
+        alert("The image file is too large. Limit 1MB. 300x300px recommended dimensions.");
         goodImage = false;
         return;
     }
@@ -37,7 +40,7 @@ function onImgSelect(input) {
 }
 
 function onGooglePlayUrlChange(value) {
-    $('#pvwImg').attr ("title", "On click URL: " + value);
+    $('#pvwImg').attr("title", "On click URL: " + value);
 }
 
 function onAppNameChange(value) {
@@ -59,8 +62,8 @@ function onPublishDateChange(value) {
 }
 
 function getNumEst (formVal) {
-    val = formVal.replace(/\,/g,'');
-    if (isNaN(val) || val=="") {
+    var val = formVal.replace(/\,/g,'');
+    if (isNaN(val) || val==="") {
         val = "N/A";
     } else if (val >= 1000 && val < 1000000) {
         val = ((Math.floor (val/1000))) + "K+";
@@ -87,7 +90,7 @@ function updatePreview() {
     onDownloadsChange ($("input[name=downloads]").val());
 
     //Deselect picture.  I don't know how to load it
-    onDownloadsChange ($("input[name=imageFile]").val(""));
+    $("input[name=imageFile]").val("");
 }
 
 
@@ -127,7 +130,7 @@ function showFormDiv() {
 
 
 function isEmpty(val) {
-    return $.trim(val) == '';
+    return $.trim(val) === '';
 }
 
 $(document).ready(function()
@@ -148,7 +151,7 @@ $(document).ready(function()
             isEmpty($('input[name=imageFile]').val()) ||
             isEmpty($('input[name=author').val()) ||
             isEmpty($('input[name=email]').val()) || 
-            goodImage == false) {
+            goodImage === false) {
 
             alert ("Error: One or more required fields were empty or not the correct format.");
             if (!goodImage) {
@@ -165,14 +168,13 @@ $(document).ready(function()
         var formObj = $(this);
         var formURL = formObj.attr("action");
 
-        if (window.FormData == undefined) {  // for HTML5 browsers
-            alert ("old browser.  No upload");
+        if (window.FormData === undefined) {  // for HTML5 browsers
+            alert ("This browser does not support the form upload feature. Please use a newer browser.");
             return;
         }
 
         var formData = new FormData(this);
 
-        alert ("about to ajax this baby");
         $.ajax({
             url: formURL,
             type: 'POST',
@@ -182,23 +184,19 @@ $(document).ready(function()
             contentType: false,
             processData:false,
             success: function(data, textStatus, jqXHR) {
-                if (typeof data.error === 'undefined') {
-                    alert ("real success");
+                if (typeof data.error == 'undefined') {
                     $(".appSubmitResult").html(data);
                 } else {
-                    alert ("fake success");
-                    $(".appSubmitResult").html(data + 'data.error: <pre><code>'+data.error+'</code></pre>');
+                    $(".appSubmitResult").html('An error occured during form submission. ' + data.error);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                alert (textStatus);
-                $(".appSubmitResult").html('<pre><code class="prettyprint">AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</code></pre>');
+                $(".appSubmitResult").html('The AJAX Request Failed. ' + errorThrown);
             }          
         });
 
         $(".appSubmitDiv").css("display","none");
         $(".appResultDiv").css("display","block");
-        alert ("finished");
     }); 
 });
 
