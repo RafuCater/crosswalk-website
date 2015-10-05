@@ -95,9 +95,7 @@ function uploadImageFile() {
     global $valueArray;
 
     $retVal = "";
-//    $uploadDir = "/srv/www/stg.crosswalk-project.org/_db-app-images/";
-    $uploadDir = "/home/bob/src/crosswalk/website/_db-app-images";
-    // check website permissions: ps aux | egrep '(apache|httpd)' 
+    $uploadDir = "/srv/www/stg.crosswalk-project.org/_db-app-images/";
 
     $errArray = array(UPLOAD_ERR_INI_SIZE  => 'The image file size exceeds the 2MB allowed limit.',
                       UPLOAD_ERR_FORM_SIZE => 'The image file size exceeds the 2MB allowed limit.',
@@ -130,16 +128,24 @@ function uploadImageFile() {
         $tmpName = $_FILES["imageFile"]['tmp_name'];
 
         // Check MIME type
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        if (false === $ext = array_search (
-            $finfo->file ($tmpName),
-            array ('jpg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'),
-            true)) {
-            throw new RuntimeException('Invalid file format. Image file must be jpg, png, or gif.');
+/*
+      Currently failing on staging server:  
+     Fatal error: Class 'finfo' not found in /srv/www/stg.crosswalk-project.org/www/documentation/community/app-submit.php on line 133
+*/
+        $uniqueName = $_FILES["imageFile"]['name'];
+        if (class_exists ( "finfo" )) {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            if (false === $ext = array_search (
+                $finfo->file ($tmpName),
+                array ('jpg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'),
+                true)) {
+                throw new RuntimeException('Invalid file format. Image file must be jpg, png, or gif.');
+            }
+
+            // Get unique name for file (we will store in DB)
+            $uniqueName = sprintf ("%s.%s", sha1_file($tmpName), $ext);
         }
 
-        // Get unique name for file (we will store in DB)
-        $uniqueName = sprintf ("%s.%s", sha1_file($tmpName), $ext);
         if (!move_uploaded_file ($tmpName, sprintf ("%s/%s", $uploadDir, $uniqueName))) {
             throw new RuntimeException('Failed to move uploaded image file.');
         }
@@ -171,7 +177,7 @@ function getFormValues() {
     $valueArray['email']  =    sanitizeInput ($_POST['email']);
 
     $publishDate = strtotime(sanitizeInput ($_POST['publishDate']));
-    $valueArray['publishDate'] = ($publishDate ? date('Y-m-d', $publishDate) : '');
+    $valueArray['publishDate'] = ($publishDate ? date('Y-m-d', $publishDate) : null);
 
     $valueArray['downloads'] = sanitizeInput ($_POST['downloads']);
     $valueArray['price'] =     sanitizeInput ($_POST['price']);
@@ -226,10 +232,10 @@ function quickValidate() {
 // ------ Start --------------
 // needed?  if (!$_SERVER["REQUEST_METHOD"] == "POST") {
 
-//echo "<pre><code>";
+echo "<pre><code>";
 //print_r ($_POST);
-//print_r ($_FILES);
-//echo "</code></pre>";
+print_r ($_FILES);
+echo "</code></pre>";
 
 if (!quickValidate()) {
     printResultDiv ($retVal);
