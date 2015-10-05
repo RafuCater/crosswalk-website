@@ -39,40 +39,65 @@ function onImgSelect(input) {
     goodImage = true;
 }
 
-function onGooglePlayUrlChange(value) {
+function isEmpty(val) {
+    return $.trim(val) === '';
+}
+
+function onStoreUrlChange(value) {
+    if (isEmpty(value)) {
+        value = "<App Store URL>";
+    }
     $('#pvwImg').attr("title", "On click URL: " + value);
 }
 
 function onAppNameChange(value) {
+    if (isEmpty(value)) {
+        value = "Application Name";
+    }
     $('#pvwLabel').text (value);
 }
 function onAuthorChange(value) {
+    if (isEmpty(value)) {
+        value = "Author";
+    }
     $('#pvwAuthor').text (value);
 }
 function onAuthorUrlChange(value) {
+    if (isEmpty(value)) {
+        value = "<Author URL>";
+    }
     $('#pvwAuthor').attr ("title", "On click URL: " + value);
 }
-function onPublishDateChange(value) {
-    var dateText = value;
-    var d = new Date (value);
-    if (!isNaN( d.getTime())) {
-        dateText = monthNames[d.getMonth()] + " " + d.getFullYear();
+
+function getDateEst (inVal) {
+    var d = new Date (inVal);
+    if (isNaN( d.getTime())) {
+        outVal = "N/A";
+    } else {
+        outVal = monthNames[d.getMonth()] + " " + d.getFullYear();
     }
-    $('#pvwPublishDate').text ("Published: " + dateText);
+    return outVal;
 }
 
-function getNumEst (formVal) {
-    var val = formVal.replace(/\,/g,'');
-    if (isNaN(val) || val==="") {
-        val = "N/A";
-    } else if (val >= 1000 && val < 1000000) {
-        val = ((Math.floor (val/1000))) + "K+";
-    } else if (val >= 1000000 && val < 1000000000) {
-        val = ((Math.floor (val/1000000))) + "M+";
-    } else if (val >= 1000000000) {
-        val = "Whoa!";
+function onPublishDateChange(value) {
+    $('#pvwPublishDate').text ("Published: " + getDateEst(value));
+}
+
+function getNumEst (inVal) {
+    if (isEmpty(inVal)) {
+        return "N/A";
     }
-    return val;                           
+    var outVal = inVal.toString().replace(/\,/g,'');
+    if (isNaN(outVal) || outVal==="") {
+        outVal = "N/A";
+    } else if (outVal >= 1000 && outVal < 1000000) {
+        outVal = ((Math.floor (outVal/1000))) + "K+";
+    } else if (outVal >= 1000000 && outVal < 1000000000) {
+        outVal = ((Math.floor (outVal/1000000))) + "M+";
+    } else if (outVal >= 1000000000) {
+        outVal = "Whoa!";
+    }
+    return outVal;                           
 }
 
 function onDownloadsChange(value) {
@@ -82,7 +107,7 @@ function onPriceChange(value) {}
 
 //update all preview fields (only called when page loaded)
 function updatePreview() {
-    onGooglePlayUrlChange ($("input[name=googleUrl]").val());
+    onStoreUrlChange ($("input[name=storeUrl]").val());
     onAppNameChange ($("input[name=name]").val());
     onAuthorChange ($("input[name=author]").val());
     onAuthorUrlChange ($("input[name=authorUrl]").val());
@@ -93,29 +118,6 @@ function updatePreview() {
     $("input[name=imageFile]").val("");
 }
 
-
-/*
-function createPreviewHtml() {
-    var output = 
-"    <div class='appDisplayPvw'> \
-      <div class='appCube' id='pvwCube'> \
-        <div class='appLabel' id='pvwLabel'>" + $('[name=name]').val() + "</div> \
-        <img class='appImg' id='pvwImg'  \
-             src='/assets/apps/missing-image.jpg' \
-             title="<Google Play URL>"/>
-        <div class='appDetailLabel'>
-          <div class='appAuthor' id='pvwAuthor' 
-               title="On click URL: <Author URL>">Author</div>
-          <div id='pvwPublishDate'>Published: &lt;TBD&gt;</div>
-          <div id='pvwDownloads'>Downloads: &lt;TBD&gt;</div>
-        </div>
-      </div>
-      <div class='appPreviewLabel'>Display Preview</div>
-    </div>
-}
-*/
-
-
 // If an error occurs, the user can return to their form
 // without losing all their entries via this function
 function showFormDiv() {
@@ -124,14 +126,7 @@ function showFormDiv() {
     $(".appResultDiv").css("display","none");
 }
 
-
-
 //--------- App Insert into DB from form ---------------
-
-
-function isEmpty(val) {
-    return $.trim(val) === '';
-}
 
 $(document).ready(function()
 {
@@ -199,4 +194,68 @@ $(document).ready(function()
         $(".appResultDiv").css("display","block");
     }); 
 });
+
+//==================================================
+
+/*
+--- Finished app div: ----
+<div class='appCube' id='cube0'>
+  <div class='appLabel'>Tiny Flashlight LED</div>
+
+  <a href='https://play.google.com/store/apps/details?id=com.devuni.flashlight&hl=en'>
+    <img class='appImg' id='appImg0' src='/assets/apps/tiny-flashlight-led84.jpg'/>
+  </a>
+
+  <div class='appDetailLabel'>
+    <a href='https://www.intel.com'>
+      <div class='appAuthor'>Nikolay Ananiev</div>
+    </a>
+    <div>Published: Jan 2015</div>
+    <div>Downloads: 50M+</div>
+  </div>
+</div>
+*/
+
+// Create application div for apps.php 
+function printResultDiv (row) {
+    var hasStoreUrl = (row['storeUrl'].length > 0);
+    var hasAuthorUrl = (row['authorUrl'].length > 0);
+    if (!hasAuthorUrl && hasStoreUrl) {
+        row['authorUrl'] = row['storeUrl']; //use store URl if no author URL
+        hasAuthorUrl = true;
+    }
+    var output = 
+        "<div class='appCube'>\n" +
+        "  <div class='appLabel'>" + row['name'] + "</div>\n" +
+        (hasStoreUrl ? 
+            "  <a href='" + row['storeUrl'] + "'>\n" + 
+            "    <img class='appImg' src='/assets/apps/icons/" + row['image'] + "'/>\n" +
+            "  </a>\n"
+        :   "  <img class='appImgNoLink' src='/assets/apps/icons/" + row['image'] + "'/>\n") +
+
+        "  <div class='appDetailLabel'>\n" + 
+        (hasAuthorUrl ? 
+            "    <a href='" + row['authorUrl'] + "'>\n" + 
+            "      <div class='appAuthor'>" + row['author'] + "</div>\n" +
+            "    </a>\n"
+        :   "     <div class='appAuthorNoLink'>" + row['author'] + "</div>\n") +
+        "    <div>Published: " + (row['publishDate'] ? getDateEst (row['publishDate'])
+                                  : "N/A") + "</div>\n" +
+        "    <div>Downloads: " + (row['downloads']   ? getNumEst (row['downloads'])
+                                  : "N/A") + "</div>\n" + 
+        "  </div>\n" +
+        "</div>\n";
+    return output;
+}
+
+// Go through all apps and create divs
+function displayApps(dbRows, where) {
+    var output = "";
+    for (i=0; i<dbRows.length; i++) {
+        var row = dbRows[i];
+        output += printResultDiv (row);
+    };
+    output += "<br clear='all' /><br>(App count: " + dbRows.length + ")";
+    return output;
+}
 

@@ -265,110 +265,124 @@
 
 
 <article class="article article--hasToC">
-  
-
   <h2>Crosswalk Project-Empowered Apps</h2>
-  <div class="introBlock">This page showcases applications that have been built using the Crosswalk Project.  All applications listed have been published in an application store.</div>
+<p>This page showcases applications that have been built using the Crosswalk Project.  All applications listed have been published in an application store.</p>
 
-<div class="mainBlock2">
-  <div class="iconGrid" id="iconGrid" >
+<p><a href="/documentation/community/app-submit.html">App Submission Page</a></p>
 
-    <div class='cube' id='cube0'>
-      <div class='appLabel'>Tiny Flashlight LED</div>
-      <br>
-      <a href='https://play.google.com/store/apps/details?id=com.devuni.flashlight&hl=en'>
-	<img class='appImg' id='appImg0'src='/assets/apps/tiny-flashlight-led84.jpg'/> <br>
-      </a>
-      <div class='appDetailLabel'>
-	<a href='https://www.intel.com'>Nikolay Ananiev<br>
-	</a>Published: Jan 2015<br>Downloads: 50M+<br>
-      </div>
-    </div>
-
-    <div class='cube' id='cube1'>
-      <div class='appLabel'>Pinterest</div>
-      <br>
-      <a href='https://play.google.com/store/apps/details?id=com.pinterest&hl=en'>
-	<img class='appImg' id='appImg1'src='/assets/apps/pinterest84.jpg'/> <br>
-      </a>
-      <div class='appDetailLabel'>
-	<a href='http://www.pinterest.com'>Pinterest Inc.<br>
-	</a>Published: Feb 2013<br>Downloads: 50,000<br>
-      </div>
-    </div>
-
-    <div class='cube' id='cube2'>
-      <div class='appLabel'>Amazon Mobile</div>
-      <br>
-      <a href='https://play.google.com/store/apps/details?id=com.amazon.mShop.android.shopping&hl=en'>
-	<img class='appImg' id='appImg2'src='/assets/apps/amazon-mobile84.jpg'/> <br>
-      </a>
-      <div class='appDetailLabel'>
-	<a href='http://www.amazon.com'>Amazon Inc.<br>
-	</a>Published: Mar 2011<br>Downloads: 100M+<br>
-      </div>
-    </div>
-
+<div class="appListMain">
+  <div class="appListGrid" id="appListGrid" >
+    Error: Loading applications failed.
   </div>
-  <br clear="all" />
 </div>
 
+<br clear="all" />
+
+<script src="/js/apps.js"></scrip>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 <?php
+// Query for apps from MySql DB, loaded into JSON Javascript format
 
-$con = mysqli_connect('localhost', 'xwalkweb', 'webapps');
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+
+$retVal = "";
+$dbRows = array();
+
+function getAppsFromDb () {
+    global $retVal;
+    global $dbRows;
+
+    $retVal = "";
+    try {
+        $mysqli  = new mysqli('localhost', 'xwalkweb', 'webapps', 'xwalk');
+        if ($mysqli->connect_errno) {
+            throw new RuntimeException("Unable to connect to database. " . $mysqli->connect_error);
+        }
+
+        if (!($stmt = $mysqli->prepare ("SELECT storeUrl, name, image, author, authorUrl, email, publishDate, downloads, price, size, architecture, xdk, category, version, notes, status FROM xwalk_apps"))) {
+            throw new RuntimeException("Unable to prepare database SELECT statement." . $mysqli->error);
+        }
+        if (!$stmt->execute()) {
+            throw new RuntimeException("Unable to execute database insert statement." . $stmt->error);
+        }
+        // 15 values
+        if (!($stmt->bind_result($storeUrl, $name, $image, $author, $authorUrl, $email, 
+                                 $publishDate, $downloads, $price, $size, $architecture, 
+                                 $xdk, $category, $version, $notes, $status))) {
+            throw new RuntimeException("Unable to bind results from databaes SELECT statement" . $stmt->error);
+        }
+
+        // fetch values
+        while ($stmt->fetch()) {
+            $dbRows[] = ["storeUrl" =>  $storeUrl, 
+                         "name" =>      $name,
+                         "image" =>     $image,
+                         "author" =>    $author, 
+                         "authorUrl" => $authorUrl, 
+                         "email" =>     $email, 
+                         "publishDate" => $publishDate, 
+                         "downloads" => $downloads, 
+                         "price" =>     $price, 
+                         "size" =>      $size, 
+                         "architecture" => $architecture, 
+                         "xdk" =>       $xdk, 
+                         "category" =>  $category, 
+                         "version" =>   $version, 
+                         "notes" =>     $notes, 
+                         "status" =>    $status];
+        }
+        $stmt->close();
+    } catch (RuntimeException $e) {
+        $mysqli->close();
+        $retVal = $e->getMessage();
+        return false;
+    }
+    $mysqli->close();
+    return true;
 }
-echo "Connect great boys" . "<br>";
 
-if (!mysqli_select_db($con, "xwalk")) {
-    die("Failed to select db: " . $con->select_error);
-}
+// Create <script> section with dbRows data
+$content = "<script>\n";
 
-$result = mysqli_query($con, "SELECT * FROM `xwalk_apps`");
+//get apps from DB, convert into Javascript-usable (JSON) format, generate App List
+if (getAppsFromDb ()) {
+    $content .= "$('#appListGrid').html ( displayApps(" . json_encode($dbRows) . ", null));\n";
+} else {
+    $content .= "$('#appListGrid').html ('No application information is available. ' + $retVal);\n";
+} 
 
-if (mysqli_num_rows($result) == 0) {
-    //exit quietly
-    echo "No rows found in table!.". "<br>";
-    exit;
-}
-while( $row = mysqli_fetch_array($result) ) {
-    $appid = $row['appid'];
-    $name = $row['name'];
-    $publish_date = $row['publish_date'];
+$content .= "</script>\n";
 
-    echo "Found!  ID: " . $appid . ", name: " . $name . 
-         ", Publish Date: " . $publish_date . "<br>";
-}
-
-/*********************/
+echo $content;
 
 /*
-+----------------+---------------+------+-----+---------+-------+
-| Field          | Type          | Null | Key | Default | Extra |
-+----------------+---------------+------+-----+---------+-------+
-| appid          | char(10)      | NO   | PRI | NULL    |       |
-| name           | varchar(255)  | NO   |     | NULL    |       |
-| author         | varchar(100)  | NO   |     | NULL    |       |
-| publish_date   | date          | YES  |     | NULL    |       |
-| num_downloads  | int(11)       | YES  |     | NULL    |       |
-| image          | varchar(255)  | YES  |     | NULL    |       |
-| price          | decimal(6,2)  | YES  |     | NULL    |       |
-| size           | int(11)       | YES  |     | NULL    |       |
-| architecture   | bit(6)        | YES  |     | NULL    |       |
-| xdk            | bit(1)        | YES  |     | NULL    |       |
-| category       | varchar(100)  | YES  |     | NULL    |       |
-| version        | varchar(100)  | YES  |     | NULL    |       |
-| description    | varchar(500)  | YES  |     | NULL    |       |
-| author_url     | varchar(2000) | YES  |     | NULL    |       |
-| goole_play_url | varchar(2000) | YES  |     | NULL    |       |
-+----------------+---------------+------+-----+---------+-------+
++--------------+---------------+------+-----+---------+----------------+
+| Field        | Type          | Null | Key | Default | Extra          |
++--------------+---------------+------+-----+---------+----------------+
+| appid        | int(11)       | NO   | PRI | NULL    | auto_increment |
+| status       | varchar(20)   | NO   |     | NULL    |                |
+| storeUrl     | varchar(2000) | YES  |     | NULL    |                |
+| name         | varchar(255)  | NO   |     | NULL    |                |
+| image        | varchar(255)  | NO   |     | NULL    |                |
+| author       | varchar(100)  | NO   |     | NULL    |                |
+| authorUrl    | varchar(2000) | YES  |     | NULL    |                |
+| email        | varchar(100)  | NO   |     | NULL    |                |
+| publishDate  | date          | YES  |     | NULL    |                |
+| downloads    | int(11)       | YES  |     | NULL    |                |
+| price        | decimal(6,2)  | YES  |     | NULL    |                |
+| size         | int(11)       | YES  |     | NULL    |                |
+| architecture | varchar(100)  | YES  |     | NULL    |                |
+| xdk          | bit(1)        | YES  |     | NULL    |                |
+| category     | varchar(100)  | YES  |     | NULL    |                |
+| version      | varchar(100)  | YES  |     | NULL    |                |
+| notes        | varchar(500)  | YES  |     | NULL    |                |
++--------------+---------------+------+-----+---------+----------------+
 */
 
 ?>
-
- <a href="/documentation/community/app-submit.html">App Submission Page</a>
 
   <footer class="article-next">
     

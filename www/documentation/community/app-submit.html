@@ -279,7 +279,7 @@
         <div class='appLabel' id='pvwLabel'>Application Name</div>
         <img class='appImg' id='pvwImg' 
              src='/assets/apps/missing-image.jpg' 
-             title="On click URL: <Google Play URL>"/>
+             title="On click URL: <App store URL>"/>
         <div class='appDetailLabel'>
           <div class='appAuthor' id='pvwAuthor' 
                title="On click URL: <Author URL>">Author</div>
@@ -298,9 +298,9 @@
                oninput="onAppTitleChange(this.value)" />
       </p>
       <p style="padding-top:0px">
-        <label>Google Play URL: </label>
-        <input name="googleUrl" class="url" type="url" autofocus placeholder="http://" 
-               oninput="onGooglePlayUrlChange(this.value)"/>
+        <label>App store URL: </label>
+        <input name="storeUrl" class="url" type="url" autofocus placeholder="http://" 
+               oninput="onStoreUrlUrlChange(this.value)"/>
       </p>
       <p>
         <label>App name*: </label>
@@ -421,7 +421,7 @@
   </div>
 </div> <!-- appResultDiv -->
 
-<script src="/js/applist.js"></script>
+<script src="/js/apps.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
