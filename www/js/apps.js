@@ -219,7 +219,7 @@ $(document).ready(function()
 // Create application div for apps.php 
 function printResultDiv (row) {
     var hasStoreUrl = (row['storeUrl'] && (row['storeUrl'].length > 0));
-    var hasAuthorUrl = (row['authorUrl'] && row['authorUrl'].length > 0));
+    var hasAuthorUrl = (row['authorUrl'] && (row['authorUrl'].length > 0));
     if (!hasAuthorUrl && hasStoreUrl) {
         row['authorUrl'] = row['storeUrl']; //use store URl if no author URL
         hasAuthorUrl = true;

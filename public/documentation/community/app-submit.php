@@ -232,10 +232,10 @@ function quickValidate() {
 // ------ Start --------------
 // needed?  if (!$_SERVER["REQUEST_METHOD"] == "POST") {
 
-echo "<pre><code>";
+//echo "<pre><code>";
 //print_r ($_POST);
-print_r ($_FILES);
-echo "</code></pre>";
+//print_r ($_FILES);
+//echo "</code></pre>";
 
 if (!quickValidate()) {
     printResultDiv ($retVal);
