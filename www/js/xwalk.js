@@ -44,6 +44,9 @@ function replace_version_string (str) {
 
 function init () {
     /* Set title to the main header string (first h1 value) */
+    if (!document.getElementsByTagName("H1")[0]) {
+        return;  // no H1 elements on page
+    }
     var mainHeader = document.getElementsByTagName("H1")[0].innerHTML;
     if (mainHeader) {
         document.title = "Crosswalk - " + mainHeader;

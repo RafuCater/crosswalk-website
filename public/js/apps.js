@@ -6,6 +6,24 @@ var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
                   "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var goodImage = false;
 
+function checkUrl(value) {
+    return (/^((http(s)?):\/\/)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value));
+}
+
+function onStoreUrlBlur(input) {
+    input.value = input.value.trim();    
+
+    //when exiting field, if invalid change font to red, else default color
+    input.style.color = (input.value && !checkUrl(input.value) ? "red" : '');
+
+    // update tooltip (title) in preview
+    $('#pvwImg').attr("title", "On click URL: " + (input.value ? input.value : "<App Store URL>"));
+}
+
+function onAppNameChange(input) {
+    $('#pvwLabel').text (input.value ? input.value : "Application Name");
+}
+
 // Load icon image when image selected and show in template
 function onImgSelect(input) {
     "use strict";
@@ -22,12 +40,14 @@ function onImgSelect(input) {
         !(input.files[0].type.match('image.*'))) {
         alert("The file selected was not an image");
         goodImage = false;
+        input.style.color = "red";
         return;
     }
     //check size (limit 1MB, should be ~4K)
     if (input.files[0].size > 1000000) {
         alert("The image file is too large. Limit 1MB. 300x300px recommended dimensions.");
         goodImage = false;
+        input.style.color = "red";
         return;
     }
     //load preview window
@@ -36,37 +56,22 @@ function onImgSelect(input) {
         $('#pvwImg').attr('src', e.target.result);
     };
     reader.readAsDataURL(input.files[0]);
+    input.style.color = "black";
     goodImage = true;
 }
 
-function isEmpty(val) {
-    return $.trim(val) === '';
+function onAuthorChange(input) {
+    $('#pvwAuthor').text (input.value ? input.value : "Author");
 }
 
-function onStoreUrlChange(value) {
-    if (isEmpty(value)) {
-        value = "<App Store URL>";
-    }
-    $('#pvwImg').attr("title", "On click URL: " + value);
-}
+function onAuthorUrlBlur(input) {
+    input.value = input.value.trim();    
 
-function onAppNameChange(value) {
-    if (isEmpty(value)) {
-        value = "Application Name";
-    }
-    $('#pvwLabel').text (value);
-}
-function onAuthorChange(value) {
-    if (isEmpty(value)) {
-        value = "Author";
-    }
-    $('#pvwAuthor').text (value);
-}
-function onAuthorUrlChange(value) {
-    if (isEmpty(value)) {
-        value = "<Author URL>";
-    }
-    $('#pvwAuthor').attr ("title", "On click URL: " + value);
+    //when exiting field, if invalid change font to red, else default color
+    input.style.color = (input.value && !checkUrl(input.value) ? "red" : '');
+
+    // update tooltip (title) in preview
+    $('#pvwAuthor').attr("title", "On click URL: " + (input.value ? input.value : "<Author URL>"));
 }
 
 function getDateEst (inVal) {
@@ -79,12 +84,12 @@ function getDateEst (inVal) {
     return outVal;
 }
 
-function onPublishDateChange(value) {
-    $('#pvwPublishDate').text ("Published: " + getDateEst(value));
+function onPublishDateChange(input) {
+    $('#pvwPublishDate').text ("Published: " + getDateEst(input.value));
 }
 
 function getNumEst (inVal) {
-    if (isEmpty(inVal)) {
+    if (!inVal || inVal == '') {
         return "N/A";
     }
     var outVal = inVal.toString().replace(/\,/g,'');
@@ -100,62 +105,106 @@ function getNumEst (inVal) {
     return outVal;                           
 }
 
-function onDownloadsChange(value) {
-    $('#pvwDownloads').text ("Downloads: " + getNumEst(value));
+function onDownloadsChange(input) {
+    input.value = input.value.trim();
+    $('#pvwDownloads').text ("Downloads: " + getNumEst(input.value));
 }
-function onPriceChange(value) {}  
+
+function onDownloadsBlur(input) {
+    var numValid = (/^(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$/i.test(input.value));
+
+    //when exiting field, if invalid change font to red, else default color
+    input.style.color = (input.value && !numValid ? "red" : '');
+}
+
+function onPriceBlur(input) {
+    var numValid = (/^\d+(\.\d{2}){0,1}$/i.test(input.value));
+
+    //when exiting field, if invalid change font to red, else default color
+    input.style.color = (input.value && !numValid ? "red" : '');
+}  
 
 //update all preview fields (only called when page loaded)
-function updatePreview() {
-    onStoreUrlChange ($("input[name=storeUrl]").val());
-    onAppNameChange ($("input[name=name]").val());
-    onAuthorChange ($("input[name=author]").val());
-    onAuthorUrlChange ($("input[name=authorUrl]").val());
-    onPublishDateChange ($("input[name=publishDate]").val());
-    onDownloadsChange ($("input[name=downloads]").val());
+function onPageLoad() {
+    $('html,body').animate({scrollTop:0},0); //for both result page or form error
 
-    //Deselect picture.  I don't know how to load it
-    $("input[name=imageFile]").val("");
+    // empty all fields
+    $('#appSubmitForm').trigger("reset");
+
+    // set url fields' font color to default color on focus 
+    $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').focus(function() {
+        $(this).css('color','');
+    });
+
+    // init jquery popup calendar object
+    $("#publishDate").datepicker();
+
+    //load preview 
+    onStoreUrlBlur (document.getElementById("storeUrl"));
+    onAppNameChange (document.getElementById("name"));
+    onAuthorChange (document.getElementById("author"));
+    onAuthorUrlBlur (document.getElementById("authorUrl"));
+
+    onPublishDateChange (document.getElementById("publishDate"));
+    onDownloadsChange (document.getElementById("downloads"));
 }
 
 // If an error occurs, the user can return to their form
 // without losing all their entries via this function
 function showFormDiv() {
     $('html,body').animate({scrollTop:0},0);
-    $(".appSubmitDiv").css("display","block");
-    $(".appResultDiv").css("display","none");
+    $("#appSubmitPage").css("display","block");
+    $("#appResultDiv").css("display","none");
 }
 
 //--------- App Insert into DB from form ---------------
 
+function validateForm() {
+    var url = $('input[name=storeUrl]').val();
+    if (url && !checkUrl(url)) {
+        if (!confirm ("The App Store URL does not appear to be a valid website. " + 
+                     "Do you want to continue anyway?")) {
+            return false;
+        }
+    }
+    //double-check values
+    if ($('#name').val()   == '' || $('#imageFile').val() == '' ||
+        $('#author').val() == '' || $('#email').val() == '') {
+        alert ("Error: One or more required fields were empty or not the correct format.");
+        return false;
+    }
+    if (!goodImage) {
+        $('input[name=imageFile]').focus();
+        alert ("Please select a valid icon image for your application.");
+        return false;
+    }
+    if ($('input[name=price]').val() > 200) {
+        alert ("You wish! Maximum price allowed is $200.");
+        return;
+    }
+    url = $('input[name=authorUrl]').val()
+    if (url && !checkUrl(url)) {
+        if (!confirm ("The Author URL does not appear to be a valid website. " + 
+                     "Do you want to continue anyway?")) {
+            return false;
+        }
+    }
+    return true;
+}
+
 $(document).ready(function()
 {
-    //refresh preview if there are values in form already
-    updatePreview();
-
-    $("#datepicker").datepicker();
+    if (document.getElementById ("appListPage")) {
+        return;
+    }
+    onPageLoad();
 
     //Callback handler for form submit event
     $(".appSubmitForm").submit(function(e) {
         e.stopPropagation(); // Stop stuff happening
         e.preventDefault(); //Prevent Default action. 
 
-        //double-check values
-        $('html,body').animate({scrollTop:0},0);
-        if (isEmpty($('input[name=name]').val()) || 
-            isEmpty($('input[name=imageFile]').val()) ||
-            isEmpty($('input[name=author').val()) ||
-            isEmpty($('input[name=email]').val()) || 
-            goodImage === false) {
-
-            alert ("Error: One or more required fields were empty or not the correct format.");
-            if (!goodImage) {
-                $('input[name=imageFile]').focus();
-            }
-            return;
-        }
-        if ($('input[name=price]').val() > 200) {
-            alert ("You wish! Maximum price allowed is $200.");
+        if (!validateForm()) {
             return;
         }
 
@@ -180,20 +229,22 @@ $(document).ready(function()
             processData:false,
             success: function(data, textStatus, jqXHR) {
                 if (typeof data.error == 'undefined') {
-                    $(".appSubmitResult").html(data);
+                    $("#appSubmitResult").html(data);
                 } else {
-                    $(".appSubmitResult").html('An error occured during form submission. ' + data.error);
+                    $("#appSubmitResult").html('An error occured during form submission. ' + data.error);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                $(".appSubmitResult").html('The AJAX Request Failed. ' + errorThrown);
+                $("#appSubmitResult").html('The AJAX Request Failed. ' + errorThrown);
             }          
         });
 
-        $(".appSubmitDiv").css("display","none");
-        $(".appResultDiv").css("display","block");
+        $('html,body').animate({scrollTop:0},0);
+        $("#appSubmitPage").css("display","none");
+        $("#appResultDiv").css("display","block");
     }); 
 });
+
 
 //==================================================
 
@@ -201,11 +252,9 @@ $(document).ready(function()
 --- Finished app div: ----
 <div class='appCube' id='cube0'>
   <div class='appLabel'>Tiny Flashlight LED</div>
-
   <a href='https://play.google.com/store/apps/details?id=com.devuni.flashlight&hl=en'>
     <img class='appImg' id='appImg0' src='/assets/apps/tiny-flashlight-led84.jpg'/>
   </a>
-
   <div class='appDetailLabel'>
     <a href='https://www.intel.com'>
       <div class='appAuthor'>Nikolay Ananiev</div>

@@ -2,10 +2,6 @@
 //
 
 // Preview app.  Most styles for the preview cube are in  _applist.scss
-div.appSubmitDiv {
-  display: block;
-}
-
 div.appDisplayPvw {
   //border: 1px solid red;
   position: absolute;
@@ -179,10 +175,10 @@ p.appAccept label {
 
 // -- Styles for results page divs -----
 
-div.appResultDiv {
+#appResultDiv {
   display: none;
 }
-div.appSubmitResultDiv {
+#appSubmitResultDiv {
   border: 1px solid #b2b2b2;
   -webkit-border-radius: 15px;
   border-radius: 15px;
@@ -191,6 +187,6 @@ div.appSubmitResultDiv {
   padding: 20px;
   background-color: #f5f5f5;
 }
-.appSubmitResult {
+#appSubmitResult {
   display: inline-block;
 }

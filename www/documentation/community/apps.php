@@ -265,16 +265,19 @@
 
 
 <article class="article article--hasToC">
+  
+<div id="appListPage">
   <h2>Crosswalk Project-Empowered Apps</h2>
-<p>This page showcases applications that have been built using the Crosswalk Project.  All applications listed have been published in an application store.</p>
+  <p>This page showcases applications that have been built using the Crosswalk Project.  All applications listed have been published in an application store.</p>
 
-<p><a href="/documentation/community/app-submit.html">App Submission Page</a></p>
+  <p><a href="/documentation/community/app-submit.html">App Submission Page</a></p>
 
-<div class="appListMain">
-  <div class="appListGrid" id="appListGrid" >
-    Error: Loading applications failed.
+  <div class="appListMain">
+    <div class="appListGrid" id="appListGrid" >
+      Error: Loading applications failed.
+    </div>
   </div>
-</div>
+</div> <!-- appListPage -->
 
 <br clear="all" />
 

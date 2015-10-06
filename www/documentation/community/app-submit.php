@@ -95,7 +95,8 @@ function uploadImageFile() {
     global $valueArray;
 
     $retVal = "";
-    $uploadDir = "/srv/www/stg.crosswalk-project.org/_db-app-images/";
+    //$uploadDir = "/srv/www/stg.crosswalk-project.org/_db-app-images/";
+    $uploadDir = "/home/bob/src/crosswalk/website/_db-app-images/";
 
     $errArray = array(UPLOAD_ERR_INI_SIZE  => 'The image file size exceeds the 2MB allowed limit.',
                       UPLOAD_ERR_FORM_SIZE => 'The image file size exceeds the 2MB allowed limit.',
@@ -179,7 +180,8 @@ function getFormValues() {
     $publishDate = strtotime(sanitizeInput ($_POST['publishDate']));
     $valueArray['publishDate'] = ($publishDate ? date('Y-m-d', $publishDate) : null);
 
-    $valueArray['downloads'] = sanitizeInput ($_POST['downloads']);
+    $valueArray['downloads'] = str_replace(',', '', sanitizeInput ($_POST['downloads']));
+
     $valueArray['price'] =     sanitizeInput ($_POST['price']);
     $valueArray['size'] =      sanitizeInput ($_POST['size']);
 
