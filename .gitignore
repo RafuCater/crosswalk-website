@@ -32,5 +32,6 @@ assets-raw/
 # images stored on server
 _db-app-images
 www/assets/apps/icons/
+www/assets/apps/icons
 public/assets/apps/icons/
 public/assets/apps/icons

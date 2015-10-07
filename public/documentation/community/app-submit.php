@@ -95,8 +95,7 @@ function uploadImageFile() {
     global $valueArray;
 
     $retVal = "";
-    //$uploadDir = "/srv/www/stg.crosswalk-project.org/_db-app-images/";
-    $uploadDir = "/home/bob/src/crosswalk/website/_db-app-images/";
+    $uploadDir = "../../../_db-app-images"; //one directory above the root
 
     $errArray = array(UPLOAD_ERR_INI_SIZE  => 'The image file size exceeds the 2MB allowed limit.',
                       UPLOAD_ERR_FORM_SIZE => 'The image file size exceeds the 2MB allowed limit.',
