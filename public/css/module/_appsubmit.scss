@@ -173,6 +173,18 @@ p.appAccept label {
   top: -5000px !important;
 }
 
+//------Style for terms and conditions dialog ---------
+.appTermsDlgTitle { 
+  font-size: 14px;
+}
+.appTermsDlg { 
+  font-size: 13px;
+  background-color: #f5f5f5;
+  font-family: Verdana, Arial,Helvetica, sans-serif;
+  width: 800px;
+  color: red;
+}
+
 // -- Styles for results page divs -----
 
 #appResultDiv {

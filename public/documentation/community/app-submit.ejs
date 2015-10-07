@@ -143,7 +143,7 @@
       <legend>Agreement</legend>
       <p class="appAccept">
         <input type="checkbox" required value=""/>
-        <label>*  I accept the <a href="#">Terms and Conditions</a>.</label>
+        <label>*  I accept the <a onclick='showTermsDialog();return false;' href="">Terms and Conditions</a>.</label>
 	<button class="appSubmitBtn" type="submit">Submit App &raquo;</button>
       </p>
     </fieldset>
@@ -159,8 +159,25 @@
   </div>
 </div> <!-- appResultDiv -->
 
+<div id="appTermsDlg" class="appTermsDlg" title="Terms and Conditions">
+  <p>The Crosswalk Project would like to highlight applications that use its runtime. 
+
+  <p>Application information provided as part of this form will be used to display the application on the Crosswalk Project website. The application will likely look similar to the 'Display Preview' shown with this form, but may also show additional information submitted here. The application will be displayed with other applications. These may or may not be comptetitors' applications.
+
+  <p>If the Play Store URL is provided, it will be used to link the application icon to the store website. If the Author URL is provided, it will be used to link the Author's name to that website.
+
+  <p>Once submitted, a confirmation email will be sent to the email address provided in the form.
+
+  <p><strong>Removal</strong><br>
+  The application can be removed from the Crosswalk Project website at any time. The email to request removal will be provided in the confirmation email sent upon submission. All efforts will be made to be responsive to this request.
+
+</div>
+
 <script src="/js/apps.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+
+

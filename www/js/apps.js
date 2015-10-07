@@ -192,61 +192,84 @@ function validateForm() {
     return true;
 }
 
+function showTermsDialog() {
+    $("#appTermsDlg").dialog("open");
+}
+
+
+function onFormSubmit(e) {
+    e.stopPropagation(); // Stop stuff happening
+    e.preventDefault(); //Prevent Default action. 
+
+    if (!validateForm()) {
+        return;
+    }
+
+    // spinner: $("#multi-msg").html("<img src='loading.gif'/>");
+    var formObj = $(this);
+    var formURL = formObj.attr("action");
+
+    if (window.FormData === undefined) {  // for HTML5 browsers
+        alert ("This browser does not support the form upload feature. Please use a newer browser.");
+        return;
+    }
+
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: formURL,
+        type: 'POST',
+        data:  formData,
+        mimeType:"multipart/form-data",
+        cache: false,
+        contentType: false,
+        processData:false,
+        success: function(data, textStatus, jqXHR) {
+            if (typeof data.error == 'undefined') {
+                $("#appSubmitResult").html(data);
+            } else {
+                $("#appSubmitResult").html('An error occured during form submission. ' + data.error);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#appSubmitResult").html('The AJAX Request Failed. ' + errorThrown);
+        }          
+    });
+
+    $('html,body').animate({scrollTop:0},0);
+    $("#appSubmitPage").css("display","none");
+    $("#appResultDiv").css("display","block");
+}
+
+// This is currently only for the appSubmitPage although this js file
+// has utility functions also shared by the Application List page (apps.php)
 $(document).ready(function()
 {
-    if (document.getElementById ("appListPage")) {
+    if (!document.getElementById ("appSubmitPage")) {
         return;
     }
     onPageLoad();
 
+    //setup jquery modal dialog to show Terms and Conditions 
+    $("#appTermsDlg").dialog({
+        autoOpen: false, modal: true, resizable: false, 
+        dialogClass: "appTermsDlg",
+
+        width: '70%',
+        autoResize:true,
+        position: {
+            my: "center", 
+            at: "center", 
+            of: window
+        }
+    }).prev(".ui-dialog-titlebar").addClass("appTermsDlgTitle");
+
     //Callback handler for form submit event
-    $(".appSubmitForm").submit(function(e) {
-        e.stopPropagation(); // Stop stuff happening
-        e.preventDefault(); //Prevent Default action. 
-
-        if (!validateForm()) {
-            return;
-        }
-
-        // spinner: $("#multi-msg").html("<img src='loading.gif'/>");
-        var formObj = $(this);
-        var formURL = formObj.attr("action");
-
-        if (window.FormData === undefined) {  // for HTML5 browsers
-            alert ("This browser does not support the form upload feature. Please use a newer browser.");
-            return;
-        }
-
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: formURL,
-            type: 'POST',
-            data:  formData,
-            mimeType:"multipart/form-data",
-            cache: false,
-            contentType: false,
-            processData:false,
-            success: function(data, textStatus, jqXHR) {
-                if (typeof data.error == 'undefined') {
-                    $("#appSubmitResult").html(data);
-                } else {
-                    $("#appSubmitResult").html('An error occured during form submission. ' + data.error);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $("#appSubmitResult").html('The AJAX Request Failed. ' + errorThrown);
-            }          
-        });
-
-        $('html,body').animate({scrollTop:0},0);
-        $("#appSubmitPage").css("display","none");
-        $("#appResultDiv").css("display","block");
-    }); 
+    $(".appSubmitForm").submit(onFormSubmit);
 });
 
 
-//==================================================
+//=== Functions for Application List Page ===============================================
 
 /*
 --- Finished app div: ----
