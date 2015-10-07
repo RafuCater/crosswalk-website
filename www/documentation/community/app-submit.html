@@ -346,7 +346,8 @@
       </p>
       <p>
         <label>Size: </label>
-	<input name="size" id="size" class="size" type="text" pattern="\d+" maxlength="5" value="0" />
+	<input name="size" id="size" class="size" type="text" maxlength="5" value="0"
+               onblur="onSizeBlur(this)" />
         <label class="left">MB</label>
       </p>
       <p>
@@ -410,7 +411,7 @@
       <legend>Agreement</legend>
       <p class="appAccept">
         <input type="checkbox" required value=""/>
-        <label>*  I accept the <a onclick='showTermsDialog();return false;' href="">Terms and Conditions</a>.<br></label>
+        <label>*  I accept the <a onclick='showTermsDialog();return false;' href="">Terms and Conditions</a>.</label>
 	<button class="appSubmitBtn" type="submit">Submit App &raquo;</button>
       </p>
     </fieldset>

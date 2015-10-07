@@ -79,7 +79,8 @@
       </p>
       <p>
         <label>Size: </label>
-	<input name="size" id="size" class="size" type="text" pattern="\d+" maxlength="5" value="0" />
+	<input name="size" id="size" class="size" type="text" maxlength="5" value="0"
+               onblur="onSizeBlur(this)" />
         <label class="left">MB</label>
       </p>
       <p>

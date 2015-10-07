@@ -17,7 +17,7 @@ function onStoreUrlBlur(input) {
     input.style.color = (input.value && !checkUrl(input.value) ? "red" : '');
 
     // update tooltip (title) in preview
-    $('#pvwImg').attr("title", "On click URL: " + (input.value ? input.value : "<App Store URL>"));
+    $('#pvwImg').attr("title", "On click URL: " + (input.value ? input.value : "<App store URL>"));
 }
 
 function onAppNameChange(input) {
@@ -123,6 +123,14 @@ function onPriceBlur(input) {
     //when exiting field, if invalid change font to red, else default color
     input.style.color = (input.value && !numValid ? "red" : '');
 }  
+
+function onSizeBlur(input) {
+    var numValid = (/^\d+$/i.test(input.value));
+
+    //when exiting field, if invalid change font to red, else default color
+    input.style.color = (input.value && !numValid ? "red" : '');
+}  
+
 
 //update all preview fields (only called when page loaded)
 function onPageLoad() {
