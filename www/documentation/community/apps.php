@@ -31,7 +31,7 @@
 
     <!-- Facebook -->
     <meta property="og:side_name" content="Crosswalk" />
-    <meta property="og:title" content="Applications" />
+    <meta property="og:title" content="Crosswalk" />
     <meta property="og:url" content="http://crosswalk-project.org/documentation/community/apps" />
     <meta property="og:description" content="Enable the most advanced web innovations with the Crosswalk Project web runtime to develop powerful Android and Cordova apps." />
     <meta property="og:image" content="/assets/crosswalk-og-banner.jpg" />
@@ -39,7 +39,7 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:url" content="http://crosswalk-project.org/documentation/community/apps" />
-    <meta name="twitter:title" content="Applications" />
+    <meta name="twitter:title" content="Crosswalk" />
     <meta name="twitter:description" content="Enable the most advanced web innovations with the Crosswalk Project web runtime to develop powerful Android and Cordova apps." />
     <meta name="twitter:site" content="@xwalk_project" />
 
@@ -98,7 +98,8 @@
       <div class="doc-main">
         <div class="row">
           
-          <nav id="contents" class="article-toc nav-toggleContainer">
+          
+<nav id="contents" class="article-toc nav-toggleContainer">
   <a href="#contents" id="contents-toggle" class="button button--small button--tertiary nav-toggle">Table of Contents</a>
   <a href="./#contents-toggle" class="button button--small button--tertiary nav-toggle--dummy">Table of Contents</a>
   <ul class="article-list nav-toggleHide">
@@ -198,42 +199,48 @@
 
          
 
-
          <ul class="article-list">
             
            <li class="article-item ">
              <a class="article-link" href="/documentation/community/awards/copu2015.html">Awards</a>
-               
+
+             
            </li>
            
            <li class="article-item ">
              <a class="article-link" href="/documentation/community/conferences/tizen2015.html">Tizen Devel Conf 2015</a>
-               
+
+             
            </li>
            
            <li class="article-item ">
              <a class="article-link" href="/documentation/community/conferences.html">Conferences</a>
-               
+
+             
            </li>
            
            <li class="article-item ">
              <a class="article-link" href="/documentation/community/presentations.html">Presentations</a>
-               
+
+             
            </li>
            
            <li class="article-item ">
              <a class="article-link" href="/documentation/community/testimonials.html">Testimonials</a>
-               
+
+             
            </li>
            
            <li class="article-item ">
              <a class="article-link" href="/documentation/community/tools.html">Tools</a>
-               
+
+             
            </li>
            
-           <li class="article-item  nav-item--active">
-             <a class="article-link" href="/documentation/community/apps.html">Applications</a>
-               
+           <li class="article-item ">
+             <a class="article-link" href="/documentation/community/apps.php">Applications</a>
+
+             
            </li>
            
          </ul>
@@ -411,8 +418,6 @@ echo $content;
     
   
     
-    
-      
     
   
 
